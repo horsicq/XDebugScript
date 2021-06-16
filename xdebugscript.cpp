@@ -1,0 +1,189 @@
+// Copyright (c) 2021 hors<horsicq@gmail.com>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+#include "xdebugscript.h"
+
+XDebugScript::XDebugScript(QObject *pParent) : QObject(pParent)
+{
+    g_pDebugger=nullptr;
+    g_DebugScriptEngine=nullptr;
+}
+
+XDebugScript::~XDebugScript()
+{
+    if(g_DebugScriptEngine)
+    {
+        delete g_DebugScriptEngine;
+    }
+}
+
+bool XDebugScript::setData(XAbstractDebugger *pDebugger, QString sScriptPath)
+{
+    bool bResult=false;
+
+    g_pDebugger=pDebugger;
+
+    g_DebugScriptEngine=new XDebugScriptEngine(this,pDebugger);
+
+    QString sText=XBinary::readFile(sScriptPath);
+
+    g_script=g_DebugScriptEngine->evaluate(sText,sScriptPath);
+
+    if(_handleError(g_script))
+    {
+        connect(pDebugger,SIGNAL(eventCreateProcess(XAbstractDebugger::PROCESS_INFO *)),this,SLOT(onEventCreateProcess(XAbstractDebugger::PROCESS_INFO *)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventExitProcess(XAbstractDebugger::EXITPROCESS_INFO *)),this,SLOT(onEventExitProcess(XAbstractDebugger::EXITPROCESS_INFO *)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventCreateThread(XAbstractDebugger::THREAD_INFO *)),this,SLOT(onEventCreateThread(XAbstractDebugger::THREAD_INFO *)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventExitThread(XAbstractDebugger::EXITTHREAD_INFO *)),this,SLOT(onEventExitThread(XAbstractDebugger::EXITTHREAD_INFO *)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventLoadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *)),this,SLOT(onEventLoadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventUnloadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *)),this,SLOT(onEventUnloadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventDebugString(XAbstractDebugger::DEBUGSTRING_INFO *)),this,SLOT(onEventDebugString(XAbstractDebugger::DEBUGSTRING_INFO *)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *)),this,SLOT(onEventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *)),this,SLOT(onEventEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventStep(XAbstractDebugger::BREAKPOINT_INFO *)),this,SLOT(onEventStep(XAbstractDebugger::BREAKPOINT_INFO *)),Qt::DirectConnection);
+        // TODO more
+
+        // TODO getMethods
+        // TODO get options
+
+        bResult=true;
+    }
+
+    return bResult;
+}
+
+bool XDebugScript::_handleError(QScriptValue scriptValue)
+{
+    bool bResult=false;
+
+    if(g_DebugScriptEngine)
+    {
+        QString sErrorString;
+        if(g_DebugScriptEngine->handleError(scriptValue,&sErrorString))
+        {
+            bResult=true;
+        }
+        else
+        {
+            qDebug("%s",sErrorString.toLatin1().data());
+        }
+    }
+
+    return bResult;
+}
+
+void XDebugScript::_onBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo, QString sFunction)
+{
+    QScriptValue scriptValue=g_DebugScriptEngine->globalObject().property(sFunction);
+
+    if(_handleError(scriptValue))
+    {
+        XDEBUGSCRIPT_BREAKPOINT_INFO breakpoint_info={};
+        breakpoint_info.address=pBreakPointInfo->nAddress;
+        breakpoint_info.info=pBreakPointInfo->vInfo.toString();
+        breakpoint_info.thread_id=pBreakPointInfo->nThreadID;
+
+        QScriptValueList valuelist;
+
+        valuelist << g_DebugScriptEngine->toScriptValue(breakpoint_info);
+
+        QScriptValue result=scriptValue.call(g_script,valuelist);
+
+        if(_handleError(result))
+        {
+            // TODO mb
+        }
+    }
+}
+
+void XDebugScript::_onSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo, QString sFunction)
+{
+    QScriptValue scriptValue=g_DebugScriptEngine->globalObject().property(sFunction);
+
+    if(_handleError(scriptValue))
+    {
+        XDEBUGSCRIPT_SHAREDOBJECT_INFO shared_info={};
+        shared_info.name=pSharedObjectInfo->sName;
+        shared_info.file_name=pSharedObjectInfo->sFileName;
+        shared_info.image_base=pSharedObjectInfo->nImageBase;
+        shared_info.image_size=pSharedObjectInfo->nImageSize;
+
+        QScriptValueList valuelist;
+
+        valuelist << g_DebugScriptEngine->toScriptValue(shared_info);
+
+        QScriptValue result=scriptValue.call(g_script,valuelist);
+
+        if(_handleError(result))
+        {
+            // TODO mb
+        }
+    }
+}
+
+void XDebugScript::onEventCreateProcess(XAbstractDebugger::PROCESS_INFO *pProcessInfo)
+{
+    qDebug("onEventCreateProcess");
+}
+
+void XDebugScript::onEventExitProcess(XAbstractDebugger::EXITPROCESS_INFO *pExitProcessInfo)
+{
+    qDebug("onEventExitProcess");
+}
+
+void XDebugScript::onEventCreateThread(XAbstractDebugger::THREAD_INFO *pThreadInfo)
+{
+    qDebug("onEventCreateThread");
+}
+
+void XDebugScript::onEventExitThread(XAbstractDebugger::EXITTHREAD_INFO *pExitThreadInfo)
+{
+    qDebug("onEventExitThread");
+}
+
+void XDebugScript::onEventLoadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo)
+{
+    _onSharedObject(pSharedObjectInfo,"_LoadSharedObject");
+}
+
+void XDebugScript::onEventUnloadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo)
+{
+    _onSharedObject(pSharedObjectInfo,"_UnloadSharedObject");
+}
+
+void XDebugScript::onEventDebugString(XAbstractDebugger::DEBUGSTRING_INFO *pDebugString)
+{
+    qDebug("onEventDebugString");
+}
+
+void XDebugScript::onEventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo)
+{
+    _onBreakPoint(pBreakPointInfo,"_BreakPoint");
+}
+
+void XDebugScript::onEventEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo)
+{
+    _onBreakPoint(pBreakPointInfo,"_EntryPoint");
+}
+
+void XDebugScript::onEventStep(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo)
+{
+    _onBreakPoint(pBreakPointInfo,"_Step");
+}
