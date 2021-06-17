@@ -43,6 +43,25 @@ struct XDEBUGSCRIPT_SHAREDOBJECT_INFO
 
 Q_DECLARE_METATYPE(XDEBUGSCRIPT_SHAREDOBJECT_INFO)
 
+struct XDEBUGSCRIPT_FUNCTION_INFO
+{
+    QString name;
+    qsreal address;
+    qsreal ret_address;
+    qsreal parameter0;
+    qsreal parameter1;
+    qsreal parameter2;
+    qsreal parameter3;
+    qsreal parameter4;
+    qsreal parameter5;
+    qsreal parameter6;
+    qsreal parameter7;
+    qsreal parameter8;
+    qsreal parameter9;
+};
+
+Q_DECLARE_METATYPE(XDEBUGSCRIPT_FUNCTION_INFO)
+
 class XDebugScriptEngine : public QScriptEngine
 {
     Q_OBJECT
@@ -70,15 +89,20 @@ private:
     QString tohex64(quint64 value);
     static QScriptValue _exit(QScriptContext *pContext,QScriptEngine *pEngine);
     void exit();
-    static QScriptValue _show_hex(QScriptContext *pContext,QScriptEngine *pEngine);
-    void show_hex(qint64 nAddress,qint64 nSize);
+    static QScriptValue _show_hex_state(QScriptContext *pContext,QScriptEngine *pEngine);
+    void show_hex_state(qint64 nAddress,qint64 nSize);
+    static QScriptValue _show_disasm_state(QScriptContext *pContext,QScriptEngine *pEngine);
+    void show_disasm_state(qint64 nAddress,qint32 nCount);
     static QScriptValue _set_function_hook(QScriptContext *pContext,QScriptEngine *pEngine);
     bool set_function_hook(QString sFunctionName);
     static QScriptValue _remove_function_hook(QScriptContext *pContext,QScriptEngine *pEngine);
     bool remove_function_hook(QString sFunctionName);
-    // TODO show_disasm(address, count)
-    // TODO show_regs(bool all_regs)
+    // TODO show_regs_state(bool all_regs)
     // TODO get_regs(bool all_regs)
+    static QScriptValue _clear_trace_file(QScriptContext *pContext,QScriptEngine *pEngine);
+    void clear_trace_file();
+    static QScriptValue _write_to_trace_file(QScriptContext *pContext,QScriptEngine *pEngine);
+    void write_to_trace_file(QString sString);
 
 private:
     XAbstractDebugger *g_pDebugger;

@@ -52,10 +52,47 @@ QScriptValue XDEBUGSCRIPT_SHAREDOBJECT_INFO_toScriptValue(QScriptEngine *engine,
 
 void XDEBUGSCRIPT_SHAREDOBJECT_INFO_fromScriptValue(const QScriptValue &obj, XDEBUGSCRIPT_SHAREDOBJECT_INFO &sharedobject_info)
 {
-    sharedobject_info.name=obj.property("name").toInteger();
+    sharedobject_info.name=obj.property("name").toString();
     sharedobject_info.file_name=obj.property("file_name").toString();
     sharedobject_info.image_base=obj.property("image_base").toInteger();
     sharedobject_info.image_size=obj.property("image_size").toInteger();
+}
+
+QScriptValue XDEBUGSCRIPT_FUNCTION_INFO_toScriptValue(QScriptEngine *engine, const XDEBUGSCRIPT_FUNCTION_INFO &function_info)
+{
+    QScriptValue obj=engine->newObject();
+
+    obj.setProperty("name",function_info.name);
+    obj.setProperty("address",function_info.address);
+    obj.setProperty("ret_address",function_info.ret_address);
+    obj.setProperty("parameter0",function_info.parameter0);
+    obj.setProperty("parameter1",function_info.parameter1);
+    obj.setProperty("parameter2",function_info.parameter2);
+    obj.setProperty("parameter3",function_info.parameter3);
+    obj.setProperty("parameter4",function_info.parameter4);
+    obj.setProperty("parameter5",function_info.parameter5);
+    obj.setProperty("parameter6",function_info.parameter6);
+    obj.setProperty("parameter7",function_info.parameter7);
+    obj.setProperty("parameter8",function_info.parameter8);
+    obj.setProperty("parameter9",function_info.parameter9);
+
+    return obj;
+}
+
+void XDEBUGSCRIPT_FUNCTION_INFO_fromScriptValue(const QScriptValue &obj, XDEBUGSCRIPT_FUNCTION_INFO &function_info)
+{
+    function_info.name=obj.property("name").toString();
+    function_info.address=obj.property("address").toInteger();
+    function_info.parameter0=obj.property("parameter0").toInteger();
+    function_info.parameter1=obj.property("parameter1").toInteger();
+    function_info.parameter2=obj.property("parameter2").toInteger();
+    function_info.parameter3=obj.property("parameter3").toInteger();
+    function_info.parameter4=obj.property("parameter4").toInteger();
+    function_info.parameter5=obj.property("parameter5").toInteger();
+    function_info.parameter6=obj.property("parameter6").toInteger();
+    function_info.parameter7=obj.property("parameter7").toInteger();
+    function_info.parameter8=obj.property("parameter8").toInteger();
+    function_info.parameter9=obj.property("parameter9").toInteger();
 }
 
 XDebugScriptEngine::XDebugScriptEngine(QObject *pParent, XAbstractDebugger *pDebugger) : QScriptEngine(pParent)
@@ -64,6 +101,7 @@ XDebugScriptEngine::XDebugScriptEngine(QObject *pParent, XAbstractDebugger *pDeb
 
     qScriptRegisterMetaType(this,XDEBUGSCRIPT_BREAKPOINT_INFO_toScriptValue,XDEBUGSCRIPT_BREAKPOINT_INFO_fromScriptValue);
     qScriptRegisterMetaType(this,XDEBUGSCRIPT_SHAREDOBJECT_INFO_toScriptValue,XDEBUGSCRIPT_SHAREDOBJECT_INFO_fromScriptValue);
+    qScriptRegisterMetaType(this,XDEBUGSCRIPT_FUNCTION_INFO_toScriptValue,XDEBUGSCRIPT_FUNCTION_INFO_fromScriptValue);
 
     _addFunction(_log_message,"log_message");
     _addFunction(_tohex8,"tohex8");
@@ -71,9 +109,12 @@ XDebugScriptEngine::XDebugScriptEngine(QObject *pParent, XAbstractDebugger *pDeb
     _addFunction(_tohex32,"tohex32");
     _addFunction(_tohex64,"tohex64");
     _addFunction(_exit,"exit");
-    _addFunction(_show_hex,"show_hex");
+    _addFunction(_show_hex_state,"show_hex_state");
+    _addFunction(_show_disasm_state,"show_disasm_state");
     _addFunction(_set_function_hook,"set_function_hook");
     _addFunction(_remove_function_hook,"remove_function_hook");
+    _addFunction(_clear_trace_file,"clear_trace_file");
+    _addFunction(_write_to_trace_file,"write_to_trace_file");
 }
 
 XDebugScriptEngine::~XDebugScriptEngine()
@@ -88,7 +129,7 @@ bool XDebugScriptEngine::handleError(QScriptValue value, QString *psErrorString)
     if(value.isError())
     {
         // TODO Check more information
-        *psErrorString=QString("%1: %2").arg(value.property("lineNumber").toInt32()).arg(value.toString());
+        *psErrorString=QString("%1(%2): %3").arg(tr("Script")).arg(value.property("lineNumber").toInt32()).arg(value.toString());
 
         bResult=false;
 
@@ -238,10 +279,8 @@ void XDebugScriptEngine::exit()
     g_pDebugger->stop();
 }
 
-QScriptValue XDebugScriptEngine::_show_hex(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_show_hex_state(QScriptContext *pContext, QScriptEngine *pEngine)
 {
-    Q_UNUSED(pContext)
-
     QScriptValue result;
 
     XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
@@ -251,22 +290,57 @@ QScriptValue XDebugScriptEngine::_show_hex(QScriptContext *pContext, QScriptEngi
         qint64 nAddress=pContext->argument(0).toInteger();
         qint64 nSize=pContext->argument(1).toInteger();
 
-        pScriptEngine->show_hex(nAddress,nSize);
+        pScriptEngine->show_hex_state(nAddress,nSize);
     }
 
     return result;
 }
 
-void XDebugScriptEngine::show_hex(qint64 nAddress, qint64 nSize)
+void XDebugScriptEngine::show_hex_state(qint64 nAddress, qint64 nSize)
 {
     nSize=qMin(nSize,(qint64)0x1000);
 
     QByteArray baArray=g_pDebugger->read_array(nAddress,nSize);
     QString sText=baArray.toHex().data();
 
-    qDebug("%s",sText.toLatin1().data());
+    qDebug("%s",sText.toLatin1().data()); // TODO
 
     emit infoMessage(sText);
+}
+
+QScriptValue XDebugScriptEngine::_show_disasm_state(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        qint64 nAddress=pContext->argument(0).toInteger();
+        qint64 nCount=pContext->argument(1).toInteger();
+
+        pScriptEngine->show_disasm_state(nAddress,nCount);
+    }
+
+    return result;
+}
+
+void XDebugScriptEngine::show_disasm_state(qint64 nAddress, qint32 nCount)
+{
+    nCount=qMin(nCount,(qint32)100);
+
+    for(int i=0;i<nCount;i++)
+    {
+        XCapstone::DISASM_STRUCT disasmStruct=g_pDebugger->disasm(nAddress);
+
+        QString sText=disasmStruct.sString;
+
+        qDebug("%s",sText.toLatin1().data()); // TODO
+
+        emit infoMessage(sText);
+
+        nAddress+=disasmStruct.nSize;
+    }
 }
 
 QScriptValue XDebugScriptEngine::_set_function_hook(QScriptContext *pContext, QScriptEngine *pEngine)
@@ -309,4 +383,46 @@ QScriptValue XDebugScriptEngine::_remove_function_hook(QScriptContext *pContext,
 bool XDebugScriptEngine::remove_function_hook(QString sFunctionName)
 {
     return g_pDebugger->removeFunctionHook(sFunctionName);
+}
+
+QScriptValue XDebugScriptEngine::_clear_trace_file(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    Q_UNUSED(pContext)
+
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        pScriptEngine->clear_trace_file();
+    }
+
+    return result;
+}
+
+void XDebugScriptEngine::clear_trace_file()
+{
+    g_pDebugger->clearTraceFile();
+}
+
+QScriptValue XDebugScriptEngine::_write_to_trace_file(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        QString sValue=pContext->argument(0).toString();
+
+        pScriptEngine->write_to_trace_file(sValue);
+    }
+
+    return result;
+}
+
+void XDebugScriptEngine::write_to_trace_file(QString sString)
+{
+    g_pDebugger->writeToTraceFile(sString);
 }

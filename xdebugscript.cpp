@@ -58,7 +58,8 @@ bool XDebugScript::setData(XAbstractDebugger *pDebugger, QString sScriptPath)
         connect(pDebugger,SIGNAL(eventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *)),this,SLOT(onEventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *)),this,SLOT(onEventEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventStep(XAbstractDebugger::BREAKPOINT_INFO *)),this,SLOT(onEventStep(XAbstractDebugger::BREAKPOINT_INFO *)),Qt::DirectConnection);
-        // TODO more
+        connect(pDebugger,SIGNAL(eventFunctionEnter(XAbstractDebugger::FUNCTION_INFO*)),this,SLOT(onEventFunctionEnter(XAbstractDebugger::FUNCTION_INFO *)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventFunctionLeave(XAbstractDebugger::FUNCTION_INFO*)),this,SLOT(onEventFunctionLeave(XAbstractDebugger::FUNCTION_INFO *)),Qt::DirectConnection);
 
         // TODO getMethods
         // TODO get options
@@ -97,7 +98,7 @@ void XDebugScript::_onBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPoint
     {
         XDEBUGSCRIPT_BREAKPOINT_INFO breakpoint_info={};
         breakpoint_info.address=pBreakPointInfo->nAddress;
-        breakpoint_info.info=pBreakPointInfo->vInfo.toString();
+        breakpoint_info.info=pBreakPointInfo->sInfo;
         breakpoint_info.thread_id=pBreakPointInfo->nThreadID;
 
         QScriptValueList valuelist;
@@ -128,6 +129,40 @@ void XDebugScript::_onSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pShared
         QScriptValueList valuelist;
 
         valuelist << g_DebugScriptEngine->toScriptValue(shared_info);
+
+        QScriptValue result=scriptValue.call(g_script,valuelist);
+
+        if(_handleError(result))
+        {
+            // TODO mb
+        }
+    }
+}
+
+void XDebugScript::_onFunction(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo, QString sFunction)
+{
+    QScriptValue scriptValue=g_DebugScriptEngine->globalObject().property(sFunction);
+
+    if(_handleError(scriptValue))
+    {
+        XDEBUGSCRIPT_FUNCTION_INFO function_info={};
+        function_info.name=pFunctionInfo->sName;
+        function_info.address=pFunctionInfo->nAddress;
+        function_info.ret_address=pFunctionInfo->nRetAddress;
+        function_info.parameter0=pFunctionInfo->nParameter0;
+        function_info.parameter1=pFunctionInfo->nParameter1;
+        function_info.parameter2=pFunctionInfo->nParameter2;
+        function_info.parameter3=pFunctionInfo->nParameter3;
+        function_info.parameter4=pFunctionInfo->nParameter4;
+        function_info.parameter5=pFunctionInfo->nParameter5;
+        function_info.parameter6=pFunctionInfo->nParameter6;
+        function_info.parameter7=pFunctionInfo->nParameter7;
+        function_info.parameter8=pFunctionInfo->nParameter8;
+        function_info.parameter9=pFunctionInfo->nParameter9;
+
+        QScriptValueList valuelist;
+
+        valuelist << g_DebugScriptEngine->toScriptValue(function_info);
 
         QScriptValue result=scriptValue.call(g_script,valuelist);
 
@@ -186,4 +221,14 @@ void XDebugScript::onEventEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakP
 void XDebugScript::onEventStep(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo)
 {
     _onBreakPoint(pBreakPointInfo,"_Step");
+}
+
+void XDebugScript::onEventFunctionEnter(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo)
+{
+    _onFunction(pFunctionInfo,"_FunctionEnter");
+}
+
+void XDebugScript::onEventFunctionLeave(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo)
+{
+    _onFunction(pFunctionInfo,"_FunctionLeave");
 }

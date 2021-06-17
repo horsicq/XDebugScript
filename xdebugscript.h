@@ -38,6 +38,7 @@ private:
     bool _handleError(QScriptValue scriptValue);
     void _onBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo,QString sFunction);
     void _onSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo,QString sFunction);
+    void _onFunction(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo,QString sFunction);
 
 private slots:
     void onEventCreateProcess(XAbstractDebugger::PROCESS_INFO *pProcessInfo);
@@ -50,6 +51,8 @@ private slots:
     void onEventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
     void onEventEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
     void onEventStep(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
+    void onEventFunctionEnter(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo);
+    void onEventFunctionLeave(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo);
 
 signals:
     void errorMessage(QString sText);
