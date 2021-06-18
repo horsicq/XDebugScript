@@ -103,9 +103,29 @@ private:
     void clear_trace_file();
     static QScriptValue _write_to_trace_file(QScriptContext *pContext,QScriptEngine *pEngine);
     void write_to_trace_file(QString sString);
+    static QScriptValue _get_disasm_string(QScriptContext *pContext,QScriptEngine *pEngine);
+    QString get_disasm_string(qint64 nAddress);
+    static QScriptValue _set_single_step(QScriptContext *pContext,QScriptEngine *pEngine);
+    void set_single_step(qint64 nThreadId,QString sInfo);
+    static QScriptValue _add_uniq_integer(QScriptContext *pContext,QScriptEngine *pEngine);
+    void add_uniq_integer(qint64 nValue);
+    static QScriptValue _is_uniq_integer_present(QScriptContext *pContext,QScriptEngine *pEngine);
+    bool is_uniq_integer_present(qint64 nValue);
+    static QScriptValue _is_user_code(QScriptContext *pContext,QScriptEngine *pEngine);
+    bool is_user_code(qint64 nValue);
+    static QScriptValue _is_system_code(QScriptContext *pContext,QScriptEngine *pEngine);
+    bool is_system_code(qint64 nValue);
+    static QScriptValue _set_software_breakpoint(QScriptContext *pContext,QScriptEngine *pEngine);
+    bool set_software_breakpoint(qint64 nAddress,qint32 nCount,QString sInfo);
+    static QScriptValue _get_ret_address(QScriptContext *pContext,QScriptEngine *pEngine);
+    qint64 get_ret_address(qint64 nThreadId);
+
+    static QScriptValue _get_address_symbol_string(QScriptContext *pContext,QScriptEngine *pEngine);
+    QString get_address_symbol_string(qint64 nAddress);
 
 private:
     XAbstractDebugger *g_pDebugger;
+    QSet<qint64> g_stUniqIntegers;
 };
 
 #endif // XDEBUGSCRIPTENGINE_H

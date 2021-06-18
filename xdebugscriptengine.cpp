@@ -103,6 +103,7 @@ XDebugScriptEngine::XDebugScriptEngine(QObject *pParent, XAbstractDebugger *pDeb
     qScriptRegisterMetaType(this,XDEBUGSCRIPT_SHAREDOBJECT_INFO_toScriptValue,XDEBUGSCRIPT_SHAREDOBJECT_INFO_fromScriptValue);
     qScriptRegisterMetaType(this,XDEBUGSCRIPT_FUNCTION_INFO_toScriptValue,XDEBUGSCRIPT_FUNCTION_INFO_fromScriptValue);
 
+    // mb TODO tohex
     _addFunction(_log_message,"log_message");
     _addFunction(_tohex8,"tohex8");
     _addFunction(_tohex16,"tohex16");
@@ -115,6 +116,15 @@ XDebugScriptEngine::XDebugScriptEngine(QObject *pParent, XAbstractDebugger *pDeb
     _addFunction(_remove_function_hook,"remove_function_hook");
     _addFunction(_clear_trace_file,"clear_trace_file");
     _addFunction(_write_to_trace_file,"write_to_trace_file");
+    _addFunction(_get_disasm_string,"get_disasm_string");
+    _addFunction(_set_single_step,"set_single_step");
+    _addFunction(_add_uniq_integer,"add_uniq_integer");
+    _addFunction(_is_uniq_integer_present,"is_uniq_integer_present");
+    _addFunction(_is_user_code,"is_user_code");
+    _addFunction(_is_system_code,"is_system_code");
+    _addFunction(_set_software_breakpoint,"set_software_breakpoint");
+    _addFunction(_get_ret_address,"get_ret_address");
+    _addFunction(_get_address_symbol_string,"get_address_symbol_string");
 }
 
 XDebugScriptEngine::~XDebugScriptEngine()
@@ -425,4 +435,198 @@ QScriptValue XDebugScriptEngine::_write_to_trace_file(QScriptContext *pContext, 
 void XDebugScriptEngine::write_to_trace_file(QString sString)
 {
     g_pDebugger->writeToTraceFile(sString);
+}
+
+QScriptValue XDebugScriptEngine::_get_disasm_string(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        qint64 nValue=pContext->argument(0).toInteger();
+
+        result=pScriptEngine->get_disasm_string(nValue);
+    }
+
+    return result;
+}
+
+QString XDebugScriptEngine::get_disasm_string(qint64 nAddress)
+{
+    return g_pDebugger->disasm(nAddress).sString;
+}
+
+QScriptValue XDebugScriptEngine::_set_single_step(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        qint64 nValue=pContext->argument(0).toInteger();
+        QString sValue=pContext->argument(1).toString();
+
+        pScriptEngine->set_single_step(nValue,sValue);
+    }
+
+    return result;
+}
+
+void XDebugScriptEngine::set_single_step(qint64 nThreadId, QString sInfo)
+{
+    void *hThread=g_pDebugger->getThreadInfos()->value(nThreadId).hThread;
+
+    g_pDebugger->setSingleStep(hThread,sInfo);
+}
+
+QScriptValue XDebugScriptEngine::_add_uniq_integer(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        qint64 nValue=pContext->argument(0).toInteger();
+
+        pScriptEngine->add_uniq_integer(nValue);
+    }
+
+    return result;
+}
+
+void XDebugScriptEngine::add_uniq_integer(qint64 nValue)
+{
+    g_stUniqIntegers.insert(nValue);
+}
+
+QScriptValue XDebugScriptEngine::_is_uniq_integer_present(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        qint64 nValue=pContext->argument(0).toInteger();
+
+        result=pScriptEngine->is_uniq_integer_present(nValue);
+    }
+
+    return result;
+}
+
+bool XDebugScriptEngine::is_uniq_integer_present(qint64 nValue)
+{
+    return g_stUniqIntegers.contains(nValue);
+}
+
+QScriptValue XDebugScriptEngine::_is_user_code(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        qint64 nValue=pContext->argument(0).toInteger();
+
+        result=pScriptEngine->is_user_code(nValue);
+    }
+
+    return result;
+}
+
+bool XDebugScriptEngine::is_user_code(qint64 nValue)
+{
+    return g_pDebugger->isUserCode(nValue);
+}
+
+QScriptValue XDebugScriptEngine::_is_system_code(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        qint64 nValue=pContext->argument(0).toInteger();
+
+        result=pScriptEngine->is_system_code(nValue);
+    }
+
+    return result;
+}
+
+bool XDebugScriptEngine::is_system_code(qint64 nValue)
+{
+    return g_pDebugger->bIsSystemCode(nValue);
+}
+
+QScriptValue XDebugScriptEngine::_set_software_breakpoint(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        qint64 nValue1=pContext->argument(0).toInteger();
+        qint32 nValue2=pContext->argument(1).toInt32();
+        QString sValue=pContext->argument(2).toString();
+
+        result=pScriptEngine->set_software_breakpoint(nValue1,nValue2,sValue);
+    }
+
+    return result;
+}
+
+bool XDebugScriptEngine::set_software_breakpoint(qint64 nAddress, qint32 nCount, QString sInfo)
+{
+    return g_pDebugger->setSoftwareBreakpoint(nAddress,nCount,sInfo);
+}
+
+QScriptValue XDebugScriptEngine::_get_ret_address(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        qint64 nValue=pContext->argument(0).toInteger();
+        result=(qsreal)(pScriptEngine->get_ret_address(nValue));
+    }
+
+    return result;
+}
+
+qint64 XDebugScriptEngine::get_ret_address(qint64 nThreadId)
+{
+    void *hThread=g_pDebugger->getThreadInfos()->value(nThreadId).hThread;
+
+    return g_pDebugger->getRetAddress(hThread);
+}
+
+QScriptValue XDebugScriptEngine::_get_address_symbol_string(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        qint64 nValue=pContext->argument(0).toInteger();
+        result=(pScriptEngine->get_address_symbol_string(nValue));
+    }
+
+    return result;
+}
+
+QString XDebugScriptEngine::get_address_symbol_string(qint64 nAddress)
+{
+    return g_pDebugger->getAddressSymbolString(nAddress);
 }
