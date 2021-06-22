@@ -67,9 +67,37 @@ class XDebugScriptEngine : public QScriptEngine
     Q_OBJECT
 
 public:
+
+    enum OPTION_TYPE
+    {
+        OPTION_TYPE_UNKNOWN=0,
+        OPTION_TYPE_BOOL,
+        OPTION_TYPE_STRING,
+        OPTION_TYPE_INTEGER
+    };
+
+    struct OPTION
+    {
+        QVariant varValue;
+        OPTION_TYPE optionType;
+    };
+
+    struct INFO
+    {
+        QString sName;
+        QString sFileName;
+        QString sVersion;
+        QString sAuthor;
+        QString sShortInfo;
+        QString sInfo;
+        QList<QString> listMethods;
+        QList<OPTION> listOptions;
+    };
+
     XDebugScriptEngine(QObject *pParent,XAbstractDebugger *pDebugger);
     ~XDebugScriptEngine();
     bool handleError(QScriptValue value,QString *psErrorString);
+    INFO getInfo();
 
 signals:
     void infoMessage(QString sText);
@@ -119,13 +147,15 @@ private:
     bool set_software_breakpoint(qint64 nAddress,qint32 nCount,QString sInfo);
     static QScriptValue _get_ret_address(QScriptContext *pContext,QScriptEngine *pEngine);
     qint64 get_ret_address(qint64 nThreadId);
-
     static QScriptValue _get_address_symbol_string(QScriptContext *pContext,QScriptEngine *pEngine);
     QString get_address_symbol_string(qint64 nAddress);
+    static QScriptValue _dump_to_file(QScriptContext *pContext,QScriptEngine *pEngine);
+    bool dump_to_file();
 
 private:
     XAbstractDebugger *g_pDebugger;
     QSet<qint64> g_stUniqIntegers;
+    INFO g_info;
 };
 
 #endif // XDEBUGSCRIPTENGINE_H

@@ -29,16 +29,19 @@ class XDebugScript : public QObject
     Q_OBJECT
 
 public:
+
     XDebugScript(QObject *pParent=nullptr);
     ~XDebugScript();
 
-    bool setData(XAbstractDebugger *pDebugger,QString sScriptPath);
+    bool setData(XAbstractDebugger *pDebugger,QString sScriptFileName);
+    XDebugScriptEngine::INFO getInfo();
 
 private:
     bool _handleError(QScriptValue scriptValue);
     void _onBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo,QString sFunction);
     void _onSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo,QString sFunction);
     void _onFunction(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo,QString sFunction);
+    void _getInfo();
 
 private slots:
     void onEventCreateProcess(XAbstractDebugger::PROCESS_INFO *pProcessInfo);

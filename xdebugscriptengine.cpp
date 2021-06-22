@@ -149,6 +149,11 @@ bool XDebugScriptEngine::handleError(QScriptValue value, QString *psErrorString)
     return bResult;
 }
 
+XDebugScriptEngine::INFO XDebugScriptEngine::getInfo()
+{
+    return g_info;
+}
+
 void XDebugScriptEngine::_addFunction(FunctionSignature function, QString sFunctionName)
 {
     QScriptValue func=this->newFunction(function);
@@ -629,4 +634,23 @@ QScriptValue XDebugScriptEngine::_get_address_symbol_string(QScriptContext *pCon
 QString XDebugScriptEngine::get_address_symbol_string(qint64 nAddress)
 {
     return g_pDebugger->getAddressSymbolString(nAddress);
+}
+
+QScriptValue XDebugScriptEngine::_dump_to_file(QScriptContext *pContext, QScriptEngine *pEngine)
+{
+    QScriptValue result;
+
+    XDebugScriptEngine *pScriptEngine=static_cast<XDebugScriptEngine *>(pEngine);
+
+    if(pScriptEngine)
+    {
+        result=(pScriptEngine->dump_to_file());
+    }
+
+    return result;
+}
+
+bool XDebugScriptEngine::dump_to_file()
+{
+    return g_pDebugger->dumpToFile(XBinary::getDumpFileName(g_pDebugger->getProcessInfo()->sFileName));
 }

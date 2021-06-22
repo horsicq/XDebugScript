@@ -34,7 +34,7 @@ XDebugScript::~XDebugScript()
     }
 }
 
-bool XDebugScript::setData(XAbstractDebugger *pDebugger, QString sScriptPath)
+bool XDebugScript::setData(XAbstractDebugger *pDebugger, QString sScriptFileName)
 {
     bool bResult=false;
 
@@ -42,9 +42,9 @@ bool XDebugScript::setData(XAbstractDebugger *pDebugger, QString sScriptPath)
 
     g_DebugScriptEngine=new XDebugScriptEngine(this,pDebugger);
 
-    QString sText=XBinary::readFile(sScriptPath);
+    QString sText=XBinary::readFile(sScriptFileName);
 
-    g_script=g_DebugScriptEngine->evaluate(sText,sScriptPath);
+    g_script=g_DebugScriptEngine->evaluate(sText,sScriptFileName);
 
     if(_handleError(g_script))
     {
@@ -61,13 +61,24 @@ bool XDebugScript::setData(XAbstractDebugger *pDebugger, QString sScriptPath)
         connect(pDebugger,SIGNAL(eventFunctionEnter(XAbstractDebugger::FUNCTION_INFO*)),this,SLOT(onEventFunctionEnter(XAbstractDebugger::FUNCTION_INFO *)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventFunctionLeave(XAbstractDebugger::FUNCTION_INFO*)),this,SLOT(onEventFunctionLeave(XAbstractDebugger::FUNCTION_INFO *)),Qt::DirectConnection);
 
-        // TODO getMethods
-        // TODO get options
+        _getInfo();
 
         bResult=true;
     }
 
     return bResult;
+}
+
+XDebugScriptEngine::INFO XDebugScript::getInfo()
+{
+    XDebugScriptEngine::INFO result={};
+
+    if(g_DebugScriptEngine)
+    {
+        g_DebugScriptEngine->getInfo();
+    }
+
+    return result;
 }
 
 bool XDebugScript::_handleError(QScriptValue scriptValue)
@@ -163,6 +174,23 @@ void XDebugScript::_onFunction(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo, 
         QScriptValueList valuelist;
 
         valuelist << g_DebugScriptEngine->toScriptValue(function_info);
+
+        QScriptValue result=scriptValue.call(g_script,valuelist);
+
+        if(_handleError(result))
+        {
+            // TODO mb
+        }
+    }
+}
+
+void XDebugScript::_getInfo()
+{
+    QScriptValue scriptValue=g_DebugScriptEngine->globalObject().property("_getInfo");
+
+    if(_handleError(scriptValue))
+    {
+        QScriptValueList valuelist;
 
         QScriptValue result=scriptValue.call(g_script,valuelist);
 
