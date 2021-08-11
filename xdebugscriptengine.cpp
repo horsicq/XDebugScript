@@ -139,7 +139,7 @@ bool XDebugScriptEngine::handleError(QScriptValue value, QString *psErrorString)
     if(value.isError())
     {
         // TODO Check more information
-        *psErrorString=QString("%1(%2): %3").arg(tr("Script")).arg(value.property("lineNumber").toInt32()).arg(value.toString());
+        *psErrorString=QString("%1(%2): %3").arg(tr("Script"),value.property("lineNumber").toString(),value.toString());
 
         bResult=false;
 
