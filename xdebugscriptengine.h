@@ -22,7 +22,15 @@
 #define XDEBUGSCRIPTENGINE_H
 
 #include <QScriptEngine>
-#include "xwindowsdebugger.h" // TODO Linux too
+#ifdef Q_OS_WIN
+#include "xwindowsdebugger.h"
+#endif
+#ifdef Q_OS_LINUX
+#include "xlinuxdebugger.h"
+#endif
+#ifdef Q_OS_OSX
+#include "xosxdebugger.h"
+#endif
 
 struct XDEBUGSCRIPT_BREAKPOINT_INFO
 {

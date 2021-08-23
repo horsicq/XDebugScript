@@ -22,14 +22,12 @@
 #define XDEBUGSCRIPT_H
 
 #include "xdebugscriptengine.h"
-#include "xwindowsdebugger.h" // TODO Linux too
 
 class XDebugScript : public QObject
 {
     Q_OBJECT
 
 public:
-
     XDebugScript(QObject *pParent=nullptr);
     ~XDebugScript();
 
