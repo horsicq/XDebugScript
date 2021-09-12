@@ -206,37 +206,51 @@ void XDebugScript::_getInfo()
 
 void XDebugScript::onEventCreateProcess(XAbstractDebugger::PROCESS_INFO *pProcessInfo)
 {
+#ifdef QT_DEBUG
     qDebug("onEventCreateProcess");
+#endif
 }
 
 void XDebugScript::onEventExitProcess(XAbstractDebugger::EXITPROCESS_INFO *pExitProcessInfo)
 {
+#ifdef QT_DEBUG
     qDebug("onEventExitProcess");
+#endif
 }
 
 void XDebugScript::onEventCreateThread(XAbstractDebugger::THREAD_INFO *pThreadInfo)
 {
+#ifdef QT_DEBUG
     qDebug("onEventCreateThread");
+#endif
 }
 
 void XDebugScript::onEventExitThread(XAbstractDebugger::EXITTHREAD_INFO *pExitThreadInfo)
 {
+#ifdef QT_DEBUG
     qDebug("onEventExitThread");
+#endif
 }
 
 void XDebugScript::onEventLoadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo)
 {
+#ifdef QT_DEBUG
     _onSharedObject(pSharedObjectInfo,"_LoadSharedObject");
+#endif
 }
 
 void XDebugScript::onEventUnloadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo)
 {
+#ifdef QT_DEBUG
     _onSharedObject(pSharedObjectInfo,"_UnloadSharedObject");
+#endif
 }
 
 void XDebugScript::onEventDebugString(XAbstractDebugger::DEBUGSTRING_INFO *pDebugString)
 {
+#ifdef QT_DEBUG
     qDebug("onEventDebugString");
+#endif
 }
 
 void XDebugScript::onEventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo)

@@ -318,9 +318,9 @@ void XDebugScriptEngine::show_hex_state(qint64 nAddress, qint64 nSize)
 
     QByteArray baArray=g_pDebugger->read_array(nAddress,nSize);
     QString sText=baArray.toHex().data();
-
+#ifdef QT_DEBUG
     qDebug("%s",sText.toLatin1().data()); // TODO
-
+#endif
     emit infoMessage(sText);
 }
 
