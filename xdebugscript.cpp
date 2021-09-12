@@ -94,8 +94,10 @@ bool XDebugScript::_handleError(QScriptValue scriptValue)
         }
         else
         {
+        #ifdef QT_DEBUG
             // TODO
             qDebug("%s",sErrorString.toLatin1().data());
+        #endif
         }
     }
 

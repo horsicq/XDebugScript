@@ -184,8 +184,9 @@ QScriptValue XDebugScriptEngine::_log_message(QScriptContext *pContext, QScriptE
 
 void XDebugScriptEngine::log_message(QString sText)
 {
+#ifdef QT_DEBUG
     qDebug("%s",sText.toLatin1().data());
-
+#endif
     emit infoMessage(sText);
 }
 
