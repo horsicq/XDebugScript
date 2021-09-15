@@ -61,6 +61,9 @@ bool XDebugScript::setData(XAbstractDebugger *pDebugger, QString sScriptFileName
         connect(pDebugger,SIGNAL(eventFunctionEnter(XAbstractDebugger::FUNCTION_INFO*)),this,SLOT(onEventFunctionEnter(XAbstractDebugger::FUNCTION_INFO *)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventFunctionLeave(XAbstractDebugger::FUNCTION_INFO*)),this,SLOT(onEventFunctionLeave(XAbstractDebugger::FUNCTION_INFO *)),Qt::DirectConnection);
 
+        // TODO stepInto
+        // TODO stepOver
+
         _getInfo();
 
         bResult=true;
