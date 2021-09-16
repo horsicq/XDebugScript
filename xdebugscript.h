@@ -52,6 +52,8 @@ private slots:
     void onEventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
     void onEventEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
     void onEventStep(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
+    void onEventStepInto(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
+    void onEventStepOver(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
     void onEventFunctionEnter(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo);
     void onEventFunctionLeave(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo);
 
