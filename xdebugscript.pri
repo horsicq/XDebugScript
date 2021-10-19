@@ -10,3 +10,7 @@ HEADERS += \
 SOURCES += \
     $$PWD/xdebugscript.cpp \
     $$PWD/xdebugscriptengine.cpp
+
+DISTFILES += \
+    $$PWD/LICENSE \
+    $$PWD/README.md
