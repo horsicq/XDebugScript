@@ -345,7 +345,7 @@ void XDebugScriptEngine::show_disasm_state(qint64 nAddress, qint32 nCount)
 {
     nCount=qMin(nCount,(qint32)100);
 
-    for(int i=0;i<nCount;i++)
+    for(qint32 i=0;i<nCount;i++)
     {
         XCapstone::DISASM_STRUCT disasmStruct=g_pDebugger->disasm(nAddress);
 
