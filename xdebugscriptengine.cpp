@@ -483,9 +483,11 @@ QScriptValue XDebugScriptEngine::_set_single_step(QScriptContext *pContext, QScr
 
 void XDebugScriptEngine::set_single_step(qint64 nThreadId, QString sInfo)
 {
-    void *hThread=g_pDebugger->getThreadInfos()->value(nThreadId).hThread;
+    XProcess::HANDLEID handleID={};
+    handleID.hHandle=g_pDebugger->getThreadInfos()->value(nThreadId).hThread;
+    handleID.nID=nThreadId;
 
-    g_pDebugger->setSingleStep(hThread,sInfo);
+    g_pDebugger->setSingleStep(handleID,sInfo);
 }
 
 QScriptValue XDebugScriptEngine::_add_uniq_integer(QScriptContext *pContext, QScriptEngine *pEngine)
@@ -612,9 +614,11 @@ QScriptValue XDebugScriptEngine::_get_ret_address(QScriptContext *pContext, QScr
 
 qint64 XDebugScriptEngine::get_ret_address(qint64 nThreadId)
 {
-    void *hThread=g_pDebugger->getThreadInfos()->value(nThreadId).hThread;
+    XProcess::HANDLEID handleID={};
+    handleID.hHandle=g_pDebugger->getThreadInfos()->value(nThreadId).hThread;
+    handleID.nID=nThreadId;
 
-    return g_pDebugger->getRetAddress(hThread);
+    return g_pDebugger->getRetAddress(handleID);
 }
 
 QScriptValue XDebugScriptEngine::_get_address_symbol_string(QScriptContext *pContext, QScriptEngine *pEngine)

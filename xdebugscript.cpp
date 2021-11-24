@@ -115,7 +115,7 @@ void XDebugScript::_onBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPoint
         XDEBUGSCRIPT_BREAKPOINT_INFO breakpoint_info={};
         breakpoint_info.address=pBreakPointInfo->nAddress;
         breakpoint_info.info=pBreakPointInfo->sInfo;
-        breakpoint_info.thread_id=pBreakPointInfo->nThreadID;
+        breakpoint_info.thread_id=pBreakPointInfo->handleIDThread.nID;
 
         QScriptValueList valuelist;
 
