@@ -5,11 +5,13 @@ DEPENDPATH += $$PWD
 
 HEADERS += \
     $$PWD/xdebugscript.h \
-    $$PWD/xdebugscriptengine.h
+    $$PWD/xdebugscriptengine.h \
+    $$PWD/xdebugscripthelper.h
 
 SOURCES += \
     $$PWD/xdebugscript.cpp \
-    $$PWD/xdebugscriptengine.cpp
+    $$PWD/xdebugscriptengine.cpp \
+    $$PWD/xdebugscripthelper.cpp
 
 DISTFILES += \
     $$PWD/LICENSE \
