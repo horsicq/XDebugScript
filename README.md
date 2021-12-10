@@ -1,3 +1,3 @@
 # XDebugScript
 
-Scripts for debugging
+Scripts for Windows debugging
