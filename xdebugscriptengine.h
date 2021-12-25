@@ -104,6 +104,7 @@ public:
 
     XDebugScriptEngine(QObject *pParent,XAbstractDebugger *pDebugger);
     ~XDebugScriptEngine();
+
     bool handleError(QScriptValue value,QString *psErrorString);
     INFO getInfo();
 
