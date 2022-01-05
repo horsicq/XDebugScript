@@ -21,7 +21,7 @@
 #ifndef XDEBUGSCRIPTENGINE_H
 #define XDEBUGSCRIPTENGINE_H
 
-#include <QScriptEngine>
+#include <QScriptEngine> // TODO use QJSEngine
 #ifdef Q_OS_WIN
 #include "xwindowsdebugger.h"
 #endif
