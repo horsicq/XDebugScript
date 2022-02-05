@@ -106,7 +106,7 @@ bool XDebugScript::_handleError(QScriptValue scriptValue)
     return bResult;
 }
 
-void XDebugScript::_onBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo, QString sFunction)
+void XDebugScript::_onBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo,QString sFunction)
 {
     QScriptValue scriptValue=g_DebugScriptEngine->globalObject().property(sFunction);
 
