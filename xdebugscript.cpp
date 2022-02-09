@@ -130,7 +130,7 @@ void XDebugScript::_onBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPoint
     }
 }
 
-void XDebugScript::_onSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo, QString sFunction)
+void XDebugScript::_onSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo,QString sFunction)
 {
     QScriptValue scriptValue=g_DebugScriptEngine->globalObject().property(sFunction);
 
