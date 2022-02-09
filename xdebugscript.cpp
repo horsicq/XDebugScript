@@ -34,7 +34,7 @@ XDebugScript::~XDebugScript()
     }
 }
 
-bool XDebugScript::setData(XAbstractDebugger *pDebugger, QString sScriptFileName)
+bool XDebugScript::setData(XAbstractDebugger *pDebugger,QString sScriptFileName)
 {
     bool bResult=false;
 
