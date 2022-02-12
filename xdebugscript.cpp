@@ -56,7 +56,7 @@ bool XDebugScript::setData(XAbstractDebugger *pDebugger,QString sScriptFileName)
         connect(pDebugger,SIGNAL(eventUnloadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO*)),this,SLOT(onEventUnloadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO*)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventDebugString(XAbstractDebugger::DEBUGSTRING_INFO*)),this,SLOT(onEventDebugString(XAbstractDebugger::DEBUGSTRING_INFO*)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO*)),this,SLOT(onEventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventEntryPoint(XAbstractDebugger::BREAKPOINT_INFO*)),this,SLOT(onEventEntryPoint(XAbstractDebugger::BREAKPOINT_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventProgramEntryPoint(XAbstractDebugger::BREAKPOINT_INFO*)),this,SLOT(oneventProgramEntryPoint(XAbstractDebugger::BREAKPOINT_INFO*)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventStep(XAbstractDebugger::BREAKPOINT_INFO*)),this,SLOT(onEventStep(XAbstractDebugger::BREAKPOINT_INFO*)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventStepInto(XAbstractDebugger::BREAKPOINT_INFO*)),this,SLOT(onEventStepInto(XAbstractDebugger::BREAKPOINT_INFO*)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventStepOver(XAbstractDebugger::BREAKPOINT_INFO*)),this,SLOT(onEventStepOver(XAbstractDebugger::BREAKPOINT_INFO*)),Qt::DirectConnection);
@@ -155,7 +155,7 @@ void XDebugScript::_onSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pShared
     }
 }
 
-void XDebugScript::_onFunction(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo, QString sFunction)
+void XDebugScript::_onFunction(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo,QString sFunction)
 {
     QScriptValue scriptValue=g_DebugScriptEngine->globalObject().property(sFunction);
 
@@ -260,7 +260,7 @@ void XDebugScript::onEventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakP
     _onBreakPoint(pBreakPointInfo,"_BreakPoint");
 }
 
-void XDebugScript::onEventEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo)
+void XDebugScript::oneventProgramEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo)
 {
     _onBreakPoint(pBreakPointInfo,"_EntryPoint");
 }

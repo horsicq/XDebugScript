@@ -50,7 +50,7 @@ private slots:
     void onEventUnloadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo);
     void onEventDebugString(XAbstractDebugger::DEBUGSTRING_INFO *pDebugString);
     void onEventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
-    void onEventEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
+    void oneventProgramEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
     void onEventStep(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
     void onEventStepInto(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
     void onEventStepOver(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
