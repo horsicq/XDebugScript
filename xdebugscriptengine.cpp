@@ -31,7 +31,7 @@ QScriptValue XDEBUGSCRIPT_BREAKPOINT_INFO_toScriptValue(QScriptEngine *engine, c
     return obj;
 }
 
-void XDEBUGSCRIPT_BREAKPOINT_INFO_fromScriptValue(const QScriptValue &obj, XDEBUGSCRIPT_BREAKPOINT_INFO &breakpoint_info)
+void XDEBUGSCRIPT_BREAKPOINT_INFO_fromScriptValue(const QScriptValue &obj,XDEBUGSCRIPT_BREAKPOINT_INFO &breakpoint_info)
 {
     breakpoint_info.address=obj.property("address").toInteger();
     breakpoint_info.info=obj.property("info").toString();
