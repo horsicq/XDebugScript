@@ -20,7 +20,7 @@
  */
 #include "xdebugscriptengine.h"
 
-QScriptValue XDEBUGSCRIPT_BREAKPOINT_INFO_toScriptValue(QScriptEngine *engine, const XDEBUGSCRIPT_BREAKPOINT_INFO &breakpoint_info)
+QScriptValue XDEBUGSCRIPT_BREAKPOINT_INFO_toScriptValue(QScriptEngine *engine,const XDEBUGSCRIPT_BREAKPOINT_INFO &breakpoint_info)
 {
     QScriptValue obj=engine->newObject();
 
