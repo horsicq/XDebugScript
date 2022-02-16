@@ -132,7 +132,7 @@ XDebugScriptEngine::~XDebugScriptEngine()
 
 }
 
-bool XDebugScriptEngine::handleError(QScriptValue value, QString *psErrorString)
+bool XDebugScriptEngine::handleError(QScriptValue value,QString *psErrorString)
 {
     bool bResult=true;
 
