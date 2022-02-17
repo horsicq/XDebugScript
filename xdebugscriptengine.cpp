@@ -341,7 +341,7 @@ QScriptValue XDebugScriptEngine::_show_disasm_state(QScriptContext *pContext, QS
     return result;
 }
 
-void XDebugScriptEngine::show_disasm_state(qint64 nAddress, qint32 nCount)
+void XDebugScriptEngine::show_disasm_state(qint64 nAddress,qint32 nCount)
 {
     nCount=qMin(nCount,(qint32)100);
 
