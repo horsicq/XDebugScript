@@ -38,7 +38,7 @@ void XDEBUGSCRIPT_BREAKPOINT_INFO_fromScriptValue(const QScriptValue &obj,XDEBUG
     breakpoint_info.thread_id=obj.property("thread_id").toInteger();
 }
 
-QScriptValue XDEBUGSCRIPT_SHAREDOBJECT_INFO_toScriptValue(QScriptEngine *engine, const XDEBUGSCRIPT_SHAREDOBJECT_INFO &sharedobject_info)
+QScriptValue XDEBUGSCRIPT_SHAREDOBJECT_INFO_toScriptValue(QScriptEngine *engine,const XDEBUGSCRIPT_SHAREDOBJECT_INFO &sharedobject_info)
 {
     QScriptValue obj=engine->newObject();
 
