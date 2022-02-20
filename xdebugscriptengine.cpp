@@ -359,7 +359,7 @@ void XDebugScriptEngine::show_disasm_state(qint64 nAddress,qint32 nCount)
     }
 }
 
-QScriptValue XDebugScriptEngine::_set_function_hook(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_set_function_hook(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
