@@ -166,7 +166,7 @@ void XDebugScriptEngine::_addClass(QObject *pClass, QString sClassName)
     this->globalObject().setProperty(sClassName, objectWnd);
 }
 
-QScriptValue XDebugScriptEngine::_log_message(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_log_message(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
