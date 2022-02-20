@@ -190,7 +190,7 @@ void XDebugScriptEngine::log_message(QString sText)
     emit infoMessage(sText);
 }
 
-QScriptValue XDebugScriptEngine::_tohex8(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_tohex8(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
