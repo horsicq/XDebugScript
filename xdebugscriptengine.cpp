@@ -464,7 +464,7 @@ QString XDebugScriptEngine::get_disasm_string(qint64 nAddress)
     return g_pDebugger->disasm(nAddress).sString;
 }
 
-QScriptValue XDebugScriptEngine::_set_single_step(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_set_single_step(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
