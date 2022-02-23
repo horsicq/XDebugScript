@@ -50,7 +50,7 @@ QScriptValue XDEBUGSCRIPT_SHAREDOBJECT_INFO_toScriptValue(QScriptEngine *engine,
     return obj;
 }
 
-void XDEBUGSCRIPT_SHAREDOBJECT_INFO_fromScriptValue(const QScriptValue &obj, XDEBUGSCRIPT_SHAREDOBJECT_INFO &sharedobject_info)
+void XDEBUGSCRIPT_SHAREDOBJECT_INFO_fromScriptValue(const QScriptValue &obj,XDEBUGSCRIPT_SHAREDOBJECT_INFO &sharedobject_info)
 {
     sharedobject_info.name=obj.property("name").toString();
     sharedobject_info.file_name=obj.property("file_name").toString();
