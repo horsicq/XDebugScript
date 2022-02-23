@@ -295,7 +295,7 @@ void XDebugScriptEngine::exit()
     g_pDebugger->stop();
 }
 
-QScriptValue XDebugScriptEngine::_show_hex_state(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_show_hex_state(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
