@@ -211,7 +211,7 @@ QString XDebugScriptEngine::tohex8(quint8 value)
     return XBinary::valueToHex((quint8)value);
 }
 
-QScriptValue XDebugScriptEngine::_tohex16(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_tohex16(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
