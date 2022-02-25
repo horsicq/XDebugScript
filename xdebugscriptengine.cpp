@@ -232,7 +232,7 @@ QString XDebugScriptEngine::tohex16(quint16 value)
     return XBinary::valueToHex((quint16)value);
 }
 
-QScriptValue XDebugScriptEngine::_tohex32(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_tohex32(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
