@@ -380,7 +380,7 @@ bool XDebugScriptEngine::set_function_hook(QString sFunctionName)
     return g_pDebugger->setFunctionHook(sFunctionName);
 }
 
-QScriptValue XDebugScriptEngine::_remove_function_hook(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_remove_function_hook(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
