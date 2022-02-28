@@ -154,7 +154,7 @@ XDebugScriptEngine::INFO XDebugScriptEngine::getInfo()
     return g_info;
 }
 
-//void XDebugScriptEngine::_addFunction(FunctionSignature function, QString sFunctionName)
+//void XDebugScriptEngine::_addFunction(FunctionSignature function,QString sFunctionName)
 //{
 //    QScriptValue func=this->newFunction(function);
 //    this->globalObject().setProperty(sFunctionName,func);
