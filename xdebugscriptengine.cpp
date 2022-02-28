@@ -274,7 +274,7 @@ QString XDebugScriptEngine::tohex64(quint64 value)
     return XBinary::valueToHex((quint64)value);
 }
 
-QScriptValue XDebugScriptEngine::_exit(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_exit(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     Q_UNUSED(pContext)
 
