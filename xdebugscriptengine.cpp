@@ -490,7 +490,7 @@ void XDebugScriptEngine::set_single_step(qint64 nThreadId, QString sInfo)
     g_pDebugger->setSingleStep(handleID,sInfo);
 }
 
-QScriptValue XDebugScriptEngine::_add_uniq_integer(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_add_uniq_integer(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
