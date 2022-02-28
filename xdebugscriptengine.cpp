@@ -95,7 +95,7 @@ void XDEBUGSCRIPT_FUNCTION_INFO_fromScriptValue(const QScriptValue &obj, XDEBUGS
     function_info.parameter9=obj.property("parameter9").toInteger();
 }
 
-XDebugScriptEngine::XDebugScriptEngine(QObject *pParent, XAbstractDebugger *pDebugger) : QScriptEngine(pParent)
+XDebugScriptEngine::XDebugScriptEngine(QObject *pParent,XAbstractDebugger *pDebugger) : QScriptEngine(pParent)
 {
     g_pDebugger=pDebugger;
 
