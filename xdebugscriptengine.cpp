@@ -422,7 +422,7 @@ void XDebugScriptEngine::clear_trace_file()
     g_pDebugger->clearTraceFile();
 }
 
-QScriptValue XDebugScriptEngine::_write_to_trace_file(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_write_to_trace_file(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
