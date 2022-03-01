@@ -401,7 +401,7 @@ bool XDebugScriptEngine::remove_function_hook(QString sFunctionName)
     return g_pDebugger->removeFunctionHook(sFunctionName);
 }
 
-QScriptValue XDebugScriptEngine::_clear_trace_file(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_clear_trace_file(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     Q_UNUSED(pContext)
 
