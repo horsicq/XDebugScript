@@ -324,7 +324,7 @@ void XDebugScriptEngine::show_hex_state(qint64 nAddress, qint64 nSize)
     emit infoMessage(sText);
 }
 
-QScriptValue XDebugScriptEngine::_show_disasm_state(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_show_disasm_state(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
