@@ -312,7 +312,7 @@ QScriptValue XDebugScriptEngine::_show_hex_state(QScriptContext *pContext,QScrip
     return result;
 }
 
-void XDebugScriptEngine::show_hex_state(qint64 nAddress, qint64 nSize)
+void XDebugScriptEngine::show_hex_state(qint64 nAddress,qint64 nSize)
 {
     nSize=qMin(nSize,(qint64)0x1000);
 
