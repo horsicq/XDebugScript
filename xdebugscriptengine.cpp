@@ -592,7 +592,7 @@ QScriptValue XDebugScriptEngine::_set_software_breakpoint(QScriptContext *pConte
     return result;
 }
 
-bool XDebugScriptEngine::set_software_breakpoint(qint64 nAddress, qint32 nCount, QString sInfo)
+bool XDebugScriptEngine::set_software_breakpoint(qint64 nAddress,qint32 nCount,QString sInfo)
 {
     return g_pDebugger->setSoftwareBreakpoint(nAddress,nCount,sInfo);
 }
