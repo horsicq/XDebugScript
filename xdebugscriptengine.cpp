@@ -58,7 +58,7 @@ void XDEBUGSCRIPT_SHAREDOBJECT_INFO_fromScriptValue(const QScriptValue &obj,XDEB
     sharedobject_info.image_size=obj.property("image_size").toInteger();
 }
 
-QScriptValue XDEBUGSCRIPT_FUNCTION_INFO_toScriptValue(QScriptEngine *engine, const XDEBUGSCRIPT_FUNCTION_INFO &function_info)
+QScriptValue XDEBUGSCRIPT_FUNCTION_INFO_toScriptValue(QScriptEngine *engine,const XDEBUGSCRIPT_FUNCTION_INFO &function_info)
 {
     QScriptValue obj=engine->newObject();
 
