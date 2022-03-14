@@ -79,7 +79,7 @@ QScriptValue XDEBUGSCRIPT_FUNCTION_INFO_toScriptValue(QScriptEngine *engine,cons
     return obj;
 }
 
-void XDEBUGSCRIPT_FUNCTION_INFO_fromScriptValue(const QScriptValue &obj, XDEBUGSCRIPT_FUNCTION_INFO &function_info)
+void XDEBUGSCRIPT_FUNCTION_INFO_fromScriptValue(const QScriptValue &obj,XDEBUGSCRIPT_FUNCTION_INFO &function_info)
 {
     function_info.name=obj.property("name").toString();
     function_info.address=obj.property("address").toInteger();
