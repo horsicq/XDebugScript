@@ -597,7 +597,7 @@ bool XDebugScriptEngine::set_software_breakpoint(qint64 nAddress,qint32 nCount,Q
     return g_pDebugger->setSoftwareBreakpoint(nAddress,nCount,sInfo);
 }
 
-QScriptValue XDebugScriptEngine::_get_ret_address(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_get_ret_address(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
