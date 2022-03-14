@@ -443,7 +443,7 @@ void XDebugScriptEngine::write_to_trace_file(QString sString)
     g_pDebugger->writeToTraceFile(sString);
 }
 
-QScriptValue XDebugScriptEngine::_get_disasm_string(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_get_disasm_string(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
