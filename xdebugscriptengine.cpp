@@ -641,7 +641,7 @@ QString XDebugScriptEngine::get_address_symbol_string(qint64 nAddress)
     return g_pDebugger->getAddressSymbolString(nAddress);
 }
 
-QScriptValue XDebugScriptEngine::_dump_to_file(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_dump_to_file(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
