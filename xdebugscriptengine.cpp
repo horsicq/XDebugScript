@@ -532,7 +532,7 @@ bool XDebugScriptEngine::is_uniq_integer_present(qint64 nValue)
     return g_stUniqIntegers.contains(nValue);
 }
 
-QScriptValue XDebugScriptEngine::_is_user_code(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_is_user_code(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
