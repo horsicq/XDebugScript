@@ -511,7 +511,7 @@ void XDebugScriptEngine::add_uniq_integer(qint64 nValue)
     g_stUniqIntegers.insert(nValue);
 }
 
-QScriptValue XDebugScriptEngine::_is_uniq_integer_present(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_is_uniq_integer_present(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
