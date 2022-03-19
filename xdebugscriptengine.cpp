@@ -553,7 +553,7 @@ bool XDebugScriptEngine::is_user_code(qint64 nValue)
     return g_pDebugger->isUserCode(nValue);
 }
 
-QScriptValue XDebugScriptEngine::_is_system_code(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_is_system_code(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
