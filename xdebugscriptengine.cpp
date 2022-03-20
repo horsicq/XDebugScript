@@ -574,7 +574,7 @@ bool XDebugScriptEngine::is_system_code(qint64 nValue)
     return g_pDebugger->bIsSystemCode(nValue);
 }
 
-QScriptValue XDebugScriptEngine::_set_software_breakpoint(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_set_software_breakpoint(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
