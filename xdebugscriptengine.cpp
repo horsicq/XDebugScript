@@ -621,7 +621,7 @@ qint64 XDebugScriptEngine::get_ret_address(qint64 nThreadId)
     return g_pDebugger->getRetAddress(handleID);
 }
 
-QScriptValue XDebugScriptEngine::_get_address_symbol_string(QScriptContext *pContext, QScriptEngine *pEngine)
+QScriptValue XDebugScriptEngine::_get_address_symbol_string(QScriptContext *pContext,QScriptEngine *pEngine)
 {
     QScriptValue result;
 
