@@ -316,7 +316,7 @@ void XDebugScriptEngine::show_hex_state(qint64 nAddress,qint64 nSize)
 {
     nSize=qMin(nSize,(qint64)0x1000);
 
-    QByteArray baArray=g_pDebugger->read_array(nAddress,nSize);
+    QByteArray baArray=g_pDebugger->getXInfoDB()->read_array(nAddress,nSize);
     QString sText=baArray.toHex().data();
 #ifdef QT_DEBUG
     qDebug("%s",sText.toLatin1().data()); // TODO
@@ -594,7 +594,9 @@ QScriptValue XDebugScriptEngine::_set_software_breakpoint(QScriptContext *pConte
 
 bool XDebugScriptEngine::set_software_breakpoint(qint64 nAddress,qint32 nCount,QString sInfo)
 {
-    return g_pDebugger->setSoftwareBreakpoint(nAddress,nCount,sInfo);
+//    return g_pDebugger->setSoftwareBreakpoint(nAddress,nCount,sInfo);
+    // TODO !!!
+    return false;
 }
 
 QScriptValue XDebugScriptEngine::_get_ret_address(QScriptContext *pContext,QScriptEngine *pEngine)
@@ -657,5 +659,5 @@ QScriptValue XDebugScriptEngine::_dump_to_file(QScriptContext *pContext,QScriptE
 
 bool XDebugScriptEngine::dump_to_file()
 {
-    return g_pDebugger->dumpToFile(XBinary::getDumpFileName(g_pDebugger->getProcessInfo()->sFileName));
+    return g_pDebugger->dumpToFile(XBinary::getDumpFileName(g_pDebugger->getXInfoDB()->getProcessInfo()->sFileName));
 }

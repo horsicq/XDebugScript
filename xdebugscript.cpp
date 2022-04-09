@@ -48,20 +48,20 @@ bool XDebugScript::setData(XAbstractDebugger *pDebugger,QString sScriptFileName)
 
     if(_handleError(g_script))
     {
-        connect(pDebugger,SIGNAL(eventCreateProcess(XAbstractDebugger::PROCESS_INFO*)),this,SLOT(onEventCreateProcess(XAbstractDebugger::PROCESS_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventExitProcess(XAbstractDebugger::EXITPROCESS_INFO*)),this,SLOT(onEventExitProcess(XAbstractDebugger::EXITPROCESS_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventCreateThread(XAbstractDebugger::THREAD_INFO*)),this,SLOT(onEventCreateThread(XAbstractDebugger::THREAD_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventExitThread(XAbstractDebugger::EXITTHREAD_INFO*)),this,SLOT(onEventExitThread(XAbstractDebugger::EXITTHREAD_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventLoadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO*)),this,SLOT(onEventLoadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventUnloadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO*)),this,SLOT(onEventUnloadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventDebugString(XAbstractDebugger::DEBUGSTRING_INFO*)),this,SLOT(onEventDebugString(XAbstractDebugger::DEBUGSTRING_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO*)),this,SLOT(onEventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventProgramEntryPoint(XAbstractDebugger::BREAKPOINT_INFO*)),this,SLOT(oneventProgramEntryPoint(XAbstractDebugger::BREAKPOINT_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventStep(XAbstractDebugger::BREAKPOINT_INFO*)),this,SLOT(onEventStep(XAbstractDebugger::BREAKPOINT_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventStepInto(XAbstractDebugger::BREAKPOINT_INFO*)),this,SLOT(onEventStepInto(XAbstractDebugger::BREAKPOINT_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventStepOver(XAbstractDebugger::BREAKPOINT_INFO*)),this,SLOT(onEventStepOver(XAbstractDebugger::BREAKPOINT_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventFunctionEnter(XAbstractDebugger::FUNCTION_INFO*)),this,SLOT(onEventFunctionEnter(XAbstractDebugger::FUNCTION_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventFunctionLeave(XAbstractDebugger::FUNCTION_INFO*)),this,SLOT(onEventFunctionLeave(XAbstractDebugger::FUNCTION_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventCreateProcess(XInfoDB::PROCESS_INFO*)),this,SLOT(onEventCreateProcess(XInfoDB::PROCESS_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventExitProcess(XInfoDB::EXITPROCESS_INFO*)),this,SLOT(onEventExitProcess(XInfoDB::EXITPROCESS_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventCreateThread(XInfoDB::THREAD_INFO*)),this,SLOT(onEventCreateThread(XInfoDB::THREAD_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventExitThread(XInfoDB::EXITTHREAD_INFO*)),this,SLOT(onEventExitThread(XInfoDB::EXITTHREAD_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventLoadSharedObject(XInfoDB::SHAREDOBJECT_INFO*)),this,SLOT(onEventLoadSharedObject(XInfoDB::SHAREDOBJECT_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventUnloadSharedObject(XInfoDB::SHAREDOBJECT_INFO*)),this,SLOT(onEventUnloadSharedObject(XInfoDB::SHAREDOBJECT_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventDebugString(XInfoDB::DEBUGSTRING_INFO*)),this,SLOT(onEventDebugString(XInfoDB::DEBUGSTRING_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventBreakPoint(XInfoDB::BREAKPOINT_INFO*)),this,SLOT(onEventBreakPoint(XInfoDB::BREAKPOINT_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventProgramEntryPoint(XInfoDB::BREAKPOINT_INFO*)),this,SLOT(oneventProgramEntryPoint(XInfoDB::BREAKPOINT_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventStep(XInfoDB::BREAKPOINT_INFO*)),this,SLOT(onEventStep(XInfoDB::BREAKPOINT_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventStepInto(XInfoDB::BREAKPOINT_INFO*)),this,SLOT(onEventStepInto(XInfoDB::BREAKPOINT_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventStepOver(XInfoDB::BREAKPOINT_INFO*)),this,SLOT(onEventStepOver(XInfoDB::BREAKPOINT_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventFunctionEnter(XInfoDB::FUNCTION_INFO*)),this,SLOT(onEventFunctionEnter(XInfoDB::FUNCTION_INFO*)),Qt::DirectConnection);
+        connect(pDebugger,SIGNAL(eventFunctionLeave(XInfoDB::FUNCTION_INFO*)),this,SLOT(onEventFunctionLeave(XInfoDB::FUNCTION_INFO*)),Qt::DirectConnection);
 
         _getInfo();
 
@@ -106,7 +106,7 @@ bool XDebugScript::_handleError(QScriptValue scriptValue)
     return bResult;
 }
 
-void XDebugScript::_onBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo,QString sFunction)
+void XDebugScript::_onBreakPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo,QString sFunction)
 {
     QScriptValue scriptValue=g_DebugScriptEngine->globalObject().property(sFunction);
 
@@ -130,7 +130,7 @@ void XDebugScript::_onBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPoint
     }
 }
 
-void XDebugScript::_onSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo,QString sFunction)
+void XDebugScript::_onSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo,QString sFunction)
 {
     QScriptValue scriptValue=g_DebugScriptEngine->globalObject().property(sFunction);
 
@@ -155,7 +155,7 @@ void XDebugScript::_onSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pShared
     }
 }
 
-void XDebugScript::_onFunction(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo,QString sFunction)
+void XDebugScript::_onFunction(XInfoDB::FUNCTION_INFO *pFunctionInfo,QString sFunction)
 {
     QScriptValue scriptValue=g_DebugScriptEngine->globalObject().property(sFunction);
 
@@ -206,86 +206,86 @@ void XDebugScript::_getInfo()
     }
 }
 
-void XDebugScript::onEventCreateProcess(XAbstractDebugger::PROCESS_INFO *pProcessInfo)
+void XDebugScript::onEventCreateProcess(XInfoDB::PROCESS_INFO *pProcessInfo)
 {
 #ifdef QT_DEBUG
     qDebug("onEventCreateProcess");
 #endif
 }
 
-void XDebugScript::onEventExitProcess(XAbstractDebugger::EXITPROCESS_INFO *pExitProcessInfo)
+void XDebugScript::onEventExitProcess(XInfoDB::EXITPROCESS_INFO *pExitProcessInfo)
 {
 #ifdef QT_DEBUG
     qDebug("onEventExitProcess");
 #endif
 }
 
-void XDebugScript::onEventCreateThread(XAbstractDebugger::THREAD_INFO *pThreadInfo)
+void XDebugScript::onEventCreateThread(XInfoDB::THREAD_INFO *pThreadInfo)
 {
 #ifdef QT_DEBUG
     qDebug("onEventCreateThread");
 #endif
 }
 
-void XDebugScript::onEventExitThread(XAbstractDebugger::EXITTHREAD_INFO *pExitThreadInfo)
+void XDebugScript::onEventExitThread(XInfoDB::EXITTHREAD_INFO *pExitThreadInfo)
 {
 #ifdef QT_DEBUG
     qDebug("onEventExitThread");
 #endif
 }
 
-void XDebugScript::onEventLoadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo)
+void XDebugScript::onEventLoadSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo)
 {
 #ifdef QT_DEBUG
     _onSharedObject(pSharedObjectInfo,"_LoadSharedObject");
 #endif
 }
 
-void XDebugScript::onEventUnloadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo)
+void XDebugScript::onEventUnloadSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo)
 {
 #ifdef QT_DEBUG
     _onSharedObject(pSharedObjectInfo,"_UnloadSharedObject");
 #endif
 }
 
-void XDebugScript::onEventDebugString(XAbstractDebugger::DEBUGSTRING_INFO *pDebugString)
+void XDebugScript::onEventDebugString(XInfoDB::DEBUGSTRING_INFO *pDebugString)
 {
 #ifdef QT_DEBUG
     qDebug("onEventDebugString");
 #endif
 }
 
-void XDebugScript::onEventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo)
+void XDebugScript::onEventBreakPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo)
 {
     _onBreakPoint(pBreakPointInfo,"_BreakPoint");
 }
 
-void XDebugScript::oneventProgramEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo)
+void XDebugScript::oneventProgramEntryPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo)
 {
     _onBreakPoint(pBreakPointInfo,"_EntryPoint");
 }
 
-void XDebugScript::onEventStep(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo)
+void XDebugScript::onEventStep(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo)
 {
     _onBreakPoint(pBreakPointInfo,"_Step");
 }
 
-void XDebugScript::onEventStepInto(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo)
+void XDebugScript::onEventStepInto(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo)
 {
     _onBreakPoint(pBreakPointInfo,"_StepInto");
 }
 
-void XDebugScript::onEventStepOver(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo)
+void XDebugScript::onEventStepOver(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo)
 {
     _onBreakPoint(pBreakPointInfo,"_StepOver");
 }
 
-void XDebugScript::onEventFunctionEnter(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo)
+void XDebugScript::onEventFunctionEnter(XInfoDB::FUNCTION_INFO *pFunctionInfo)
 {
     _onFunction(pFunctionInfo,"_FunctionEnter");
 }
 
-void XDebugScript::onEventFunctionLeave(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo)
+void XDebugScript::onEventFunctionLeave(XInfoDB::FUNCTION_INFO *pFunctionInfo)
 {
     _onFunction(pFunctionInfo,"_FunctionLeave");
 }

@@ -36,26 +36,26 @@ public:
 
 private:
     bool _handleError(QScriptValue scriptValue);
-    void _onBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo,QString sFunction);
-    void _onSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo,QString sFunction);
-    void _onFunction(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo,QString sFunction);
+    void _onBreakPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo,QString sFunction);
+    void _onSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo,QString sFunction);
+    void _onFunction(XInfoDB::FUNCTION_INFO *pFunctionInfo,QString sFunction);
     void _getInfo();
 
 private slots:
-    void onEventCreateProcess(XAbstractDebugger::PROCESS_INFO *pProcessInfo);
-    void onEventExitProcess(XAbstractDebugger::EXITPROCESS_INFO *pExitProcessInfo);
-    void onEventCreateThread(XAbstractDebugger::THREAD_INFO *pThreadInfo);
-    void onEventExitThread(XAbstractDebugger::EXITTHREAD_INFO *pExitThreadInfo);
-    void onEventLoadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo);
-    void onEventUnloadSharedObject(XAbstractDebugger::SHAREDOBJECT_INFO *pSharedObjectInfo);
-    void onEventDebugString(XAbstractDebugger::DEBUGSTRING_INFO *pDebugString);
-    void onEventBreakPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
-    void oneventProgramEntryPoint(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
-    void onEventStep(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
-    void onEventStepInto(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
-    void onEventStepOver(XAbstractDebugger::BREAKPOINT_INFO *pBreakPointInfo);
-    void onEventFunctionEnter(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo);
-    void onEventFunctionLeave(XAbstractDebugger::FUNCTION_INFO *pFunctionInfo);
+    void onEventCreateProcess(XInfoDB::PROCESS_INFO *pProcessInfo);
+    void onEventExitProcess(XInfoDB::EXITPROCESS_INFO *pExitProcessInfo);
+    void onEventCreateThread(XInfoDB::THREAD_INFO *pThreadInfo);
+    void onEventExitThread(XInfoDB::EXITTHREAD_INFO *pExitThreadInfo);
+    void onEventLoadSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo);
+    void onEventUnloadSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo);
+    void onEventDebugString(XInfoDB::DEBUGSTRING_INFO *pDebugString);
+    void onEventBreakPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo);
+    void oneventProgramEntryPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo);
+    void onEventStep(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo);
+    void onEventStepInto(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo);
+    void onEventStepOver(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo);
+    void onEventFunctionEnter(XInfoDB::FUNCTION_INFO *pFunctionInfo);
+    void onEventFunctionLeave(XInfoDB::FUNCTION_INFO *pFunctionInfo);
 
 signals:
     void errorMessage(QString sText);
