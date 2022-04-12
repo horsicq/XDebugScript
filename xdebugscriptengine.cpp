@@ -377,7 +377,7 @@ QScriptValue XDebugScriptEngine::_set_function_hook(QScriptContext *pContext,QSc
 
 bool XDebugScriptEngine::set_function_hook(QString sFunctionName)
 {
-    return g_pDebugger->setFunctionHook(sFunctionName);
+    return g_pDebugger->getXInfoDB()->setFunctionHook(sFunctionName);
 }
 
 QScriptValue XDebugScriptEngine::_remove_function_hook(QScriptContext *pContext,QScriptEngine *pEngine)
@@ -398,7 +398,7 @@ QScriptValue XDebugScriptEngine::_remove_function_hook(QScriptContext *pContext,
 
 bool XDebugScriptEngine::remove_function_hook(QString sFunctionName)
 {
-    return g_pDebugger->removeFunctionHook(sFunctionName);
+    return g_pDebugger->getXInfoDB()->removeFunctionHook(sFunctionName);
 }
 
 QScriptValue XDebugScriptEngine::_clear_trace_file(QScriptContext *pContext,QScriptEngine *pEngine)
@@ -484,7 +484,7 @@ QScriptValue XDebugScriptEngine::_set_single_step(QScriptContext *pContext,QScri
 void XDebugScriptEngine::set_single_step(qint64 nThreadId,QString sInfo)
 {
     XProcess::HANDLEID handleID={};
-    handleID.hHandle=g_pDebugger->getThreadInfos()->value(nThreadId).hThread;
+    handleID.hHandle=g_pDebugger->getXInfoDB()->getThreadInfos()->value(nThreadId).hThread;
     handleID.nID=nThreadId;
 
     g_pDebugger->setSingleStep(handleID,sInfo);
@@ -617,7 +617,7 @@ QScriptValue XDebugScriptEngine::_get_ret_address(QScriptContext *pContext,QScri
 qint64 XDebugScriptEngine::get_ret_address(qint64 nThreadId)
 {
     XProcess::HANDLEID handleID={};
-    handleID.hHandle=g_pDebugger->getThreadInfos()->value(nThreadId).hThread;
+    handleID.hHandle=g_pDebugger->getXInfoDB()->getThreadInfos()->value(nThreadId).hThread;
     handleID.nID=nThreadId;
 
     return g_pDebugger->getRetAddress(handleID);
