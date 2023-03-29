@@ -1,4 +1,4 @@
-/* Copyright (c) 2021-2022 hors<horsicq@gmail.com>
+/* Copyright (c) 2021-2023 hors<horsicq@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -65,16 +65,10 @@ QScriptValue XDEBUGSCRIPT_FUNCTION_INFO_toScriptValue(QScriptEngine *engine,cons
     obj.setProperty("name",function_info.name);
     obj.setProperty("address",function_info.address);
     obj.setProperty("ret_address",function_info.ret_address);
-    obj.setProperty("parameter0",function_info.parameter0);
-    obj.setProperty("parameter1",function_info.parameter1);
-    obj.setProperty("parameter2",function_info.parameter2);
-    obj.setProperty("parameter3",function_info.parameter3);
-    obj.setProperty("parameter4",function_info.parameter4);
-    obj.setProperty("parameter5",function_info.parameter5);
-    obj.setProperty("parameter6",function_info.parameter6);
-    obj.setProperty("parameter7",function_info.parameter7);
-    obj.setProperty("parameter8",function_info.parameter8);
-    obj.setProperty("parameter9",function_info.parameter9);
+
+    for (qint32 i = 0; i < 10; i++) {
+        obj.setProperty(QString("parameter%1").arg(i),function_info.parameter[i]);
+    }
 
     return obj;
 }
@@ -83,16 +77,10 @@ void XDEBUGSCRIPT_FUNCTION_INFO_fromScriptValue(const QScriptValue &obj,XDEBUGSC
 {
     function_info.name=obj.property("name").toString();
     function_info.address=obj.property("address").toInteger();
-    function_info.parameter0=obj.property("parameter0").toInteger();
-    function_info.parameter1=obj.property("parameter1").toInteger();
-    function_info.parameter2=obj.property("parameter2").toInteger();
-    function_info.parameter3=obj.property("parameter3").toInteger();
-    function_info.parameter4=obj.property("parameter4").toInteger();
-    function_info.parameter5=obj.property("parameter5").toInteger();
-    function_info.parameter6=obj.property("parameter6").toInteger();
-    function_info.parameter7=obj.property("parameter7").toInteger();
-    function_info.parameter8=obj.property("parameter8").toInteger();
-    function_info.parameter9=obj.property("parameter9").toInteger();
+
+    for (qint32 i = 0; i < 10; i++) {
+        function_info.parameter[i] = obj.property(QString("parameter%1").arg(i)).toInteger();
+    }
 }
 
 XDebugScriptEngine::XDebugScriptEngine(QObject *pParent,XAbstractDebugger *pDebugger) : QScriptEngine(pParent)

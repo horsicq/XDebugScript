@@ -21,7 +21,7 @@
 #include "xdebugscripthelper.h"
 
 XDebugScriptHelper::XDebugScriptHelper(QObject *pParent)
-    : QObject{pParent}
+    : QObject(pParent)
 {
 
 }

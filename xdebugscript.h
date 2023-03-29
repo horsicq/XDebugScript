@@ -1,4 +1,4 @@
-/* Copyright (c) 2021-2022 hors<horsicq@gmail.com>
+/* Copyright (c) 2021-2023 hors<horsicq@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,10 +50,7 @@ private slots:
     void onEventUnloadSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo);
     void onEventDebugString(XInfoDB::DEBUGSTRING_INFO *pDebugString);
     void onEventBreakPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo);
-    void oneventProgramEntryPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo);
-    void onEventStep(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo);
-    void onEventStepInto(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo);
-    void onEventStepOver(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo);
+    void onEventProgramEntryPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo);
     void onEventFunctionEnter(XInfoDB::FUNCTION_INFO *pFunctionInfo);
     void onEventFunctionLeave(XInfoDB::FUNCTION_INFO *pFunctionInfo);
 

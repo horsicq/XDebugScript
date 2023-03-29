@@ -1,4 +1,4 @@
-/* Copyright (c) 2021-2022 hors<horsicq@gmail.com>
+/* Copyright (c) 2021-2023 hors<horsicq@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -56,16 +56,7 @@ struct XDEBUGSCRIPT_FUNCTION_INFO
     QString name;
     qsreal address;
     qsreal ret_address;
-    qsreal parameter0;
-    qsreal parameter1;
-    qsreal parameter2;
-    qsreal parameter3;
-    qsreal parameter4;
-    qsreal parameter5;
-    qsreal parameter6;
-    qsreal parameter7;
-    qsreal parameter8;
-    qsreal parameter9;
+    qsreal parameter[10];
 };
 
 Q_DECLARE_METATYPE(XDEBUGSCRIPT_FUNCTION_INFO)

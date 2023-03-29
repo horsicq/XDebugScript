@@ -56,10 +56,7 @@ bool XDebugScript::setData(XAbstractDebugger *pDebugger,QString sScriptFileName)
         connect(pDebugger,SIGNAL(eventUnloadSharedObject(XInfoDB::SHAREDOBJECT_INFO*)),this,SLOT(onEventUnloadSharedObject(XInfoDB::SHAREDOBJECT_INFO*)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventDebugString(XInfoDB::DEBUGSTRING_INFO*)),this,SLOT(onEventDebugString(XInfoDB::DEBUGSTRING_INFO*)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventBreakPoint(XInfoDB::BREAKPOINT_INFO*)),this,SLOT(onEventBreakPoint(XInfoDB::BREAKPOINT_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventProgramEntryPoint(XInfoDB::BREAKPOINT_INFO*)),this,SLOT(oneventProgramEntryPoint(XInfoDB::BREAKPOINT_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventStep(XInfoDB::BREAKPOINT_INFO*)),this,SLOT(onEventStep(XInfoDB::BREAKPOINT_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventStepInto(XInfoDB::BREAKPOINT_INFO*)),this,SLOT(onEventStepInto(XInfoDB::BREAKPOINT_INFO*)),Qt::DirectConnection);
-        connect(pDebugger,SIGNAL(eventStepOver(XInfoDB::BREAKPOINT_INFO*)),this,SLOT(onEventStepOver(XInfoDB::BREAKPOINT_INFO*)),Qt::DirectConnection);
+//        connect(pDebugger,SIGNAL(eventProgramEntryPoint(XInfoDB::BREAKPOINT_INFO*)),this,SLOT(onEventProgramEntryPoint(XInfoDB::BREAKPOINT_INFO*)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventFunctionEnter(XInfoDB::FUNCTION_INFO*)),this,SLOT(onEventFunctionEnter(XInfoDB::FUNCTION_INFO*)),Qt::DirectConnection);
         connect(pDebugger,SIGNAL(eventFunctionLeave(XInfoDB::FUNCTION_INFO*)),this,SLOT(onEventFunctionLeave(XInfoDB::FUNCTION_INFO*)),Qt::DirectConnection);
 
@@ -165,16 +162,10 @@ void XDebugScript::_onFunction(XInfoDB::FUNCTION_INFO *pFunctionInfo,QString sFu
         function_info.name=pFunctionInfo->sName;
         function_info.address=pFunctionInfo->nAddress;
         function_info.ret_address=pFunctionInfo->nRetAddress;
-        function_info.parameter0=pFunctionInfo->nParameter0;
-        function_info.parameter1=pFunctionInfo->nParameter1;
-        function_info.parameter2=pFunctionInfo->nParameter2;
-        function_info.parameter3=pFunctionInfo->nParameter3;
-        function_info.parameter4=pFunctionInfo->nParameter4;
-        function_info.parameter5=pFunctionInfo->nParameter5;
-        function_info.parameter6=pFunctionInfo->nParameter6;
-        function_info.parameter7=pFunctionInfo->nParameter7;
-        function_info.parameter8=pFunctionInfo->nParameter8;
-        function_info.parameter9=pFunctionInfo->nParameter9;
+
+        for (qint32 i = 0; i < 10; i++) {
+            function_info.parameter[i]=pFunctionInfo->nParameters[i];
+        }
 
         QScriptValueList valuelist;
 
@@ -260,24 +251,9 @@ void XDebugScript::onEventBreakPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo)
     _onBreakPoint(pBreakPointInfo,"_BreakPoint");
 }
 
-void XDebugScript::oneventProgramEntryPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo)
+void XDebugScript::onEventProgramEntryPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo)
 {
     _onBreakPoint(pBreakPointInfo,"_EntryPoint");
-}
-
-void XDebugScript::onEventStep(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo)
-{
-    _onBreakPoint(pBreakPointInfo,"_Step");
-}
-
-void XDebugScript::onEventStepInto(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo)
-{
-    _onBreakPoint(pBreakPointInfo,"_StepInto");
-}
-
-void XDebugScript::onEventStepOver(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo)
-{
-    _onBreakPoint(pBreakPointInfo,"_StepOver");
 }
 
 void XDebugScript::onEventFunctionEnter(XInfoDB::FUNCTION_INFO *pFunctionInfo)
