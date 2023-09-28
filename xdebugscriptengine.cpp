@@ -471,6 +471,8 @@ QScriptValue XDebugScriptEngine::_set_single_step(QScriptContext *pContext,QScri
 
 void XDebugScriptEngine::set_single_step(qint64 nThreadId,QString sInfo)
 {
+    Q_UNUSED(nThreadId)
+    Q_UNUSED(sInfo)
 //    XProcess::HANDLEID handleID={};
 //    handleID.hHandle=g_pDebugger->getXInfoDB()->getThreadInfos()->value(nThreadId).hThread;
 //    handleID.nID=nThreadId;
