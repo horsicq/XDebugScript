@@ -23,14 +23,12 @@
 
 #include <QObject>
 
-class XDebugScriptHelper : public QObject
-{
+class XDebugScriptHelper : public QObject {
     Q_OBJECT
 public:
-    explicit XDebugScriptHelper(QObject *pParent=nullptr);
+    explicit XDebugScriptHelper(QObject *pParent = nullptr);
 
 signals:
-
 };
 
-#endif // XDEBUGSCRIPTHELPER_H
+#endif  // XDEBUGSCRIPTHELPER_H

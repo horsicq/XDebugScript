@@ -20,8 +20,6 @@
  */
 #include "xdebugscripthelper.h"
 
-XDebugScriptHelper::XDebugScriptHelper(QObject *pParent)
-    : QObject(pParent)
+XDebugScriptHelper::XDebugScriptHelper(QObject *pParent) : QObject(pParent)
 {
-
 }

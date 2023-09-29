@@ -23,22 +23,21 @@
 
 #include "xdebugscriptengine.h"
 
-class XDebugScript : public QObject
-{
+class XDebugScript : public QObject {
     Q_OBJECT
 
 public:
-    XDebugScript(QObject *pParent=nullptr);
+    XDebugScript(QObject *pParent = nullptr);
     ~XDebugScript();
 
-    bool setData(XAbstractDebugger *pDebugger,QString sScriptFileName);
+    bool setData(XAbstractDebugger *pDebugger, QString sScriptFileName);
     XDebugScriptEngine::INFO getInfo();
 
 private:
     bool _handleError(QScriptValue scriptValue);
-    void _onBreakPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo,QString sFunction);
-    void _onSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo,QString sFunction);
-    void _onFunction(XInfoDB::FUNCTION_INFO *pFunctionInfo,QString sFunction);
+    void _onBreakPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo, QString sFunction);
+    void _onSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo, QString sFunction);
+    void _onFunction(XInfoDB::FUNCTION_INFO *pFunctionInfo, QString sFunction);
     void _getInfo();
 
 private slots:
@@ -64,4 +63,4 @@ private:
     QScriptValue g_script;
 };
 
-#endif // XDEBUGSCRIPT_H
+#endif  // XDEBUGSCRIPT_H
