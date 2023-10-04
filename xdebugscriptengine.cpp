@@ -562,6 +562,9 @@ QScriptValue XDebugScriptEngine::_set_software_breakpoint(QScriptContext *pConte
 
 bool XDebugScriptEngine::set_software_breakpoint(qint64 nAddress, qint32 nCount, QString sInfo)
 {
+    Q_UNUSED(nAddress)
+    Q_UNUSED(nCount)
+    Q_UNUSED(sInfo)
     //    return g_pDebugger->setSoftwareBreakpoint(nAddress,nCount,sInfo);
     // TODO !!!
     return false;

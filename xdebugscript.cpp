@@ -200,6 +200,7 @@ void XDebugScript::onEventExitProcess(XInfoDB::EXITPROCESS_INFO *pExitProcessInf
 
 void XDebugScript::onEventCreateThread(XInfoDB::THREAD_INFO *pThreadInfo)
 {
+    Q_UNUSED(pThreadInfo)
 #ifdef QT_DEBUG
     qDebug("onEventCreateThread");
 #endif
