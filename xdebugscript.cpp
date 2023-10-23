@@ -186,6 +186,7 @@ void XDebugScript::_getInfo()
 
 void XDebugScript::onEventCreateProcess(XInfoDB::PROCESS_INFO *pProcessInfo)
 {
+    Q_UNUSED(pProcessInfo)
 #ifdef QT_DEBUG
     qDebug("onEventCreateProcess");
 #endif
