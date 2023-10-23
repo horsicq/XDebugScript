@@ -586,6 +586,8 @@ QScriptValue XDebugScriptEngine::_get_ret_address(QScriptContext *pContext, QScr
 
 qint64 XDebugScriptEngine::get_ret_address(qint64 nThreadId)
 {
+    Q_UNUSED(nThreadId)
+
     XProcess::HANDLEID handleID = {};
     //    handleID.hHandle=g_pDebugger->getXInfoDB()->getThreadInfos()->value(nThreadId).hThread;
     //    handleID.nID=nThreadId;
