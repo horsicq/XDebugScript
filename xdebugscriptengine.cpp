@@ -616,6 +616,8 @@ QString XDebugScriptEngine::get_address_symbol_string(qint64 nAddress)
 
 QScriptValue XDebugScriptEngine::_dump_to_file(QScriptContext *pContext, QScriptEngine *pEngine)
 {
+    Q_UNUSED(pContext)
+
     QScriptValue result;
 
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
