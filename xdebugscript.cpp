@@ -194,6 +194,7 @@ void XDebugScript::onEventCreateProcess(XInfoDB::PROCESS_INFO *pProcessInfo)
 
 void XDebugScript::onEventExitProcess(XInfoDB::EXITPROCESS_INFO *pExitProcessInfo)
 {
+    Q_UNUSED(pExitProcessInfo)
 #ifdef QT_DEBUG
     qDebug("onEventExitProcess");
 #endif
