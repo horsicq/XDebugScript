@@ -210,6 +210,7 @@ void XDebugScript::onEventCreateThread(XInfoDB::THREAD_INFO *pThreadInfo)
 
 void XDebugScript::onEventExitThread(XInfoDB::EXITTHREAD_INFO *pExitThreadInfo)
 {
+    Q_UNUSED(pExitThreadInfo)
 #ifdef QT_DEBUG
     qDebug("onEventExitThread");
 #endif
