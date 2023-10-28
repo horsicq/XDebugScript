@@ -232,6 +232,7 @@ void XDebugScript::onEventUnloadSharedObject(XInfoDB::SHAREDOBJECT_INFO *pShared
 
 void XDebugScript::onEventDebugString(XInfoDB::DEBUGSTRING_INFO *pDebugString)
 {
+    Q_UNUSED(pDebugString)
 #ifdef QT_DEBUG
     qDebug("onEventDebugString");
 #endif
