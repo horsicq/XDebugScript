@@ -98,51 +98,53 @@ private:
     void _addFunction(FunctionSignature function,QString sFunctionName);
     void _addClass(QObject *pClass, QString sClassName);
     static QScriptValue _log_message(QScriptContext *pContext, QScriptEngine *pEngine);
-    void log_message(QString sText);
     static QScriptValue _tohex8(QScriptContext *pContext, QScriptEngine *pEngine);
-    QString tohex8(quint8 value);
     static QScriptValue _tohex16(QScriptContext *pContext, QScriptEngine *pEngine);
-    QString tohex16(quint16 value);
     static QScriptValue _tohex32(QScriptContext *pContext, QScriptEngine *pEngine);
-    QString tohex32(quint32 value);
     static QScriptValue _tohex64(QScriptContext *pContext, QScriptEngine *pEngine);
-    QString tohex64(quint64 value);
     static QScriptValue _exit(QScriptContext *pContext, QScriptEngine *pEngine);
-    void exit();
     static QScriptValue _show_hex_state(QScriptContext *pContext, QScriptEngine *pEngine);
-    void show_hex_state(qint64 nAddress, qint64 nSize);
     static QScriptValue _show_disasm_state(QScriptContext *pContext, QScriptEngine *pEngine);
-    void show_disasm_state(qint64 nAddress, qint32 nCount);
     static QScriptValue _set_function_hook(QScriptContext *pContext, QScriptEngine *pEngine);
-    bool set_function_hook(QString sFunctionName);
     static QScriptValue _remove_function_hook(QScriptContext *pContext, QScriptEngine *pEngine);
+    static QScriptValue _clear_trace_file(QScriptContext *pContext, QScriptEngine *pEngine);
+    static QScriptValue _write_to_trace_file(QScriptContext *pContext, QScriptEngine *pEngine);
+    static QScriptValue _get_disasm_string(QScriptContext *pContext, QScriptEngine *pEngine);
+    static QScriptValue _set_single_step(QScriptContext *pContext, QScriptEngine *pEngine);
+    static QScriptValue _add_uniq_integer(QScriptContext *pContext, QScriptEngine *pEngine);
+    static QScriptValue _is_uniq_integer_present(QScriptContext *pContext, QScriptEngine *pEngine);
+    static QScriptValue _is_user_code(QScriptContext *pContext, QScriptEngine *pEngine);
+    static QScriptValue _is_system_code(QScriptContext *pContext, QScriptEngine *pEngine);
+    static QScriptValue _set_software_breakpoint(QScriptContext *pContext, QScriptEngine *pEngine);
+    static QScriptValue _get_ret_address(QScriptContext *pContext, QScriptEngine *pEngine);
+    static QScriptValue _get_address_symbol_string(QScriptContext *pContext, QScriptEngine *pEngine);
+    static QScriptValue _dump_to_file(QScriptContext *pContext, QScriptEngine *pEngine);
+
+    void log_message(QString sText);
+    QString tohex8(quint8 value);
+    QString tohex16(quint16 value);
+    QString tohex32(quint32 value);
+    QString tohex64(quint64 value);
+    void exit();
+    void show_hex_state(qint64 nAddress, qint64 nSize);
+    void show_disasm_state(qint64 nAddress, qint32 nCount);
+    bool set_function_hook(QString sFunctionName);
     bool remove_function_hook(QString sFunctionName);
     // TODO show_regs_state(bool all_regs)
     // TODO get_regs(bool all_regs)
-    static QScriptValue _clear_trace_file(QScriptContext *pContext, QScriptEngine *pEngine);
     void clear_trace_file();
-    static QScriptValue _write_to_trace_file(QScriptContext *pContext, QScriptEngine *pEngine);
     void write_to_trace_file(QString sString);
-    static QScriptValue _get_disasm_string(QScriptContext *pContext, QScriptEngine *pEngine);
     QString get_disasm_string(qint64 nAddress);
-    static QScriptValue _set_single_step(QScriptContext *pContext, QScriptEngine *pEngine);
     void set_single_step(qint64 nThreadId, QString sInfo);
-    static QScriptValue _add_uniq_integer(QScriptContext *pContext, QScriptEngine *pEngine);
     void add_uniq_integer(qint64 nValue);
-    static QScriptValue _is_uniq_integer_present(QScriptContext *pContext, QScriptEngine *pEngine);
     bool is_uniq_integer_present(qint64 nValue);
-    static QScriptValue _is_user_code(QScriptContext *pContext, QScriptEngine *pEngine);
     bool is_user_code(qint64 nValue);
-    static QScriptValue _is_system_code(QScriptContext *pContext, QScriptEngine *pEngine);
     bool is_system_code(qint64 nValue);
-    static QScriptValue _set_software_breakpoint(QScriptContext *pContext, QScriptEngine *pEngine);
     bool set_software_breakpoint(qint64 nAddress, qint32 nCount, QString sInfo);
-    static QScriptValue _get_ret_address(QScriptContext *pContext, QScriptEngine *pEngine);
     qint64 get_ret_address(qint64 nThreadId);
-    static QScriptValue _get_address_symbol_string(QScriptContext *pContext, QScriptEngine *pEngine);
     QString get_address_symbol_string(qint64 nAddress);
-    static QScriptValue _dump_to_file(QScriptContext *pContext, QScriptEngine *pEngine);
     bool dump_to_file();
+    // TODO resume all threads
 
 private:
     XAbstractDebugger *g_pDebugger;
