@@ -92,27 +92,27 @@ XDebugScriptEngine::XDebugScriptEngine(QObject *pParent, XAbstractDebugger *pDeb
     qScriptRegisterMetaType(this, XDEBUGSCRIPT_FUNCTION_INFO_toScriptValue, XDEBUGSCRIPT_FUNCTION_INFO_fromScriptValue);
 
     // mb TODO tohex
-    _addFunction(_log_message,"log_message");
-    _addFunction(_tohex8,"tohex8");
-    _addFunction(_tohex16,"tohex16");
-    _addFunction(_tohex32,"tohex32");
-    _addFunction(_tohex64,"tohex64");
-    _addFunction(_exit,"exit");
-    _addFunction(_show_hex_state,"show_hex_state");
-    _addFunction(_show_disasm_state,"show_disasm_state");
-    _addFunction(_set_function_hook,"set_function_hook");
-    _addFunction(_remove_function_hook,"remove_function_hook");
-    _addFunction(_clear_trace_file,"clear_trace_file");
-    _addFunction(_write_to_trace_file,"write_to_trace_file");
-    _addFunction(_get_disasm_string,"get_disasm_string");
-    _addFunction(_set_single_step,"set_single_step");
-    _addFunction(_add_uniq_integer,"add_uniq_integer");
-    _addFunction(_is_uniq_integer_present,"is_uniq_integer_present");
-    _addFunction(_is_user_code,"is_user_code");
-    _addFunction(_is_system_code,"is_system_code");
-    _addFunction(_set_software_breakpoint,"set_software_breakpoint");
-    _addFunction(_get_ret_address,"get_ret_address");
-    _addFunction(_get_address_symbol_string,"get_address_symbol_string");
+    _addFunction(_log_message, "log_message");
+    _addFunction(_tohex8, "tohex8");
+    _addFunction(_tohex16, "tohex16");
+    _addFunction(_tohex32, "tohex32");
+    _addFunction(_tohex64, "tohex64");
+    _addFunction(_exit, "exit");
+    _addFunction(_show_hex_state, "show_hex_state");
+    _addFunction(_show_disasm_state, "show_disasm_state");
+    _addFunction(_set_function_hook, "set_function_hook");
+    _addFunction(_remove_function_hook, "remove_function_hook");
+    _addFunction(_clear_trace_file, "clear_trace_file");
+    _addFunction(_write_to_trace_file, "write_to_trace_file");
+    _addFunction(_get_disasm_string, "get_disasm_string");
+    _addFunction(_set_single_step, "set_single_step");
+    _addFunction(_add_uniq_integer, "add_uniq_integer");
+    _addFunction(_is_uniq_integer_present, "is_uniq_integer_present");
+    _addFunction(_is_user_code, "is_user_code");
+    _addFunction(_is_system_code, "is_system_code");
+    _addFunction(_set_software_breakpoint, "set_software_breakpoint");
+    _addFunction(_get_ret_address, "get_ret_address");
+    _addFunction(_get_address_symbol_string, "get_address_symbol_string");
 }
 
 XDebugScriptEngine::~XDebugScriptEngine()
@@ -140,11 +140,11 @@ XDebugScriptEngine::INFO XDebugScriptEngine::getInfo()
     return g_info;
 }
 
- void XDebugScriptEngine::_addFunction(FunctionSignature function,QString sFunctionName)
+void XDebugScriptEngine::_addFunction(FunctionSignature function, QString sFunctionName)
 {
-     QScriptValue func=this->newFunction(function);
-     this->globalObject().setProperty(sFunctionName,func);
- }
+    QScriptValue func = this->newFunction(function);
+    this->globalObject().setProperty(sFunctionName, func);
+}
 
 void XDebugScriptEngine::_addClass(QObject *pClass, QString sClassName)
 {

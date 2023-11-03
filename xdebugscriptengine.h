@@ -95,7 +95,7 @@ signals:
     void infoMessage(QString sText);
 
 private:
-    void _addFunction(FunctionSignature function,QString sFunctionName);
+    void _addFunction(FunctionSignature function, QString sFunctionName);
     void _addClass(QObject *pClass, QString sClassName);
     static QScriptValue _log_message(QScriptContext *pContext, QScriptEngine *pEngine);
     static QScriptValue _tohex8(QScriptContext *pContext, QScriptEngine *pEngine);
