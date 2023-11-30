@@ -105,7 +105,7 @@ void XDebugScript::_onBreakPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo, QStr
     if (_handleError(scriptValue)) {
         XDEBUGSCRIPT_BREAKPOINT_INFO breakpoint_info = {};
         breakpoint_info.address = pBreakPointInfo->nAddress;
-        breakpoint_info.info = pBreakPointInfo->sInfo;
+        breakpoint_info.info = pBreakPointInfo->vInfo.toString();
         breakpoint_info.thread_id = pBreakPointInfo->nThreadID;
 
         QScriptValueList valuelist;
