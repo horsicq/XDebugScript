@@ -30,7 +30,7 @@ public:
     XDebugScript(QObject *pParent = nullptr);
     ~XDebugScript();
 
-    bool setData(XAbstractDebugger *pDebugger, QString sScriptFileName);
+    bool setData(XAbstractDebugger *pDebugger, const QString &sScriptFileName);
     XDebugScriptEngine::INFO getInfo();
 
 private:
