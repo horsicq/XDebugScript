@@ -321,19 +321,19 @@ QScriptValue XDebugScriptEngine::_show_disasm_state(QScriptContext *pContext, QS
 
 void XDebugScriptEngine::show_disasm_state(qint64 nAddress, qint32 nCount)
 {
-    nCount = qMin(nCount, (qint32)100);
+    // nCount = qMin(nCount, (qint32)100);
 
-    for (qint32 i = 0; i < nCount; i++) {
-        XCapstone::DISASM_STRUCT disasmStruct = g_pDebugger->disasm(nAddress);
+    // for (qint32 i = 0; i < nCount; i++) {
+    //     XCapstone::DISASM_STRUCT disasmStruct = g_pDebugger->disasm(nAddress);
 
-        QString sText = disasmStruct.sString;
+    //     QString sText = disasmStruct.sString;
 
-        qDebug("%s", sText.toLatin1().data());  // TODO
+    //     qDebug("%s", sText.toLatin1().data());  // TODO
 
-        emit infoMessage(sText);
+    //     emit infoMessage(sText);
 
-        nAddress += disasmStruct.nSize;
-    }
+    //     nAddress += disasmStruct.nSize;
+    // }
 }
 
 QScriptValue XDebugScriptEngine::_set_function_hook(QScriptContext *pContext, QScriptEngine *pEngine)
@@ -433,7 +433,8 @@ QScriptValue XDebugScriptEngine::_get_disasm_string(QScriptContext *pContext, QS
 
 QString XDebugScriptEngine::get_disasm_string(qint64 nAddress)
 {
-    return g_pDebugger->disasm(nAddress).sString;
+    // return g_pDebugger->disasm(nAddress).sString;
+    return "";
 }
 
 QScriptValue XDebugScriptEngine::_set_single_step(QScriptContext *pContext, QScriptEngine *pEngine)
