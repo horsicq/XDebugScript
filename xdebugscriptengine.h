@@ -28,14 +28,14 @@
 #ifdef Q_OS_LINUX
 #include "xlinuxdebugger.h"
 #endif
-#ifdef Q_OS_OSX
+#ifdef Q_OS_MACOS
 #include "xosxdebugger.h"
 #endif
 
 struct XDEBUGSCRIPT_BREAKPOINT_INFO {
-    qsreal address;
+    quint64 address;
     QString info;
-    qsreal thread_id;
+    quint64 thread_id;
 };
 
 Q_DECLARE_METATYPE(XDEBUGSCRIPT_BREAKPOINT_INFO)
@@ -43,17 +43,17 @@ Q_DECLARE_METATYPE(XDEBUGSCRIPT_BREAKPOINT_INFO)
 struct XDEBUGSCRIPT_SHAREDOBJECT_INFO {
     QString name;
     QString file_name;
-    qsreal image_base;
-    qsreal image_size;
+    quint64 image_base;
+    quint64 image_size;
 };
 
 Q_DECLARE_METATYPE(XDEBUGSCRIPT_SHAREDOBJECT_INFO)
 
 struct XDEBUGSCRIPT_FUNCTION_INFO {
     QString name;
-    qsreal address;
-    qsreal ret_address;
-    qsreal parameter[10];
+    quint64 address;
+    quint64 ret_address;
+    quint64 parameter[10];
 };
 
 Q_DECLARE_METATYPE(XDEBUGSCRIPT_FUNCTION_INFO)
@@ -126,29 +126,29 @@ private:
     QString tohex32(quint32 value);
     QString tohex64(quint64 value);
     void exit();
-    void show_hex_state(qint64 nAddress, qint64 nSize);
-    void show_disasm_state(qint64 nAddress, qint32 nCount);
+    void show_hex_state(quint64 nAddress, quint64 nSize);
+    void show_disasm_state(quint64 nAddress, qint32 nCount);
     bool set_function_hook(QString sFunctionName);
     bool remove_function_hook(QString sFunctionName);
     // TODO show_regs_state(bool all_regs)
     // TODO get_regs(bool all_regs)
     void clear_trace_file();
     void write_to_trace_file(QString sString);
-    QString get_disasm_string(qint64 nAddress);
-    void set_single_step(qint64 nThreadId, QString sInfo);
-    void add_uniq_integer(qint64 nValue);
-    bool is_uniq_integer_present(qint64 nValue);
-    bool is_user_code(qint64 nValue);
-    bool is_system_code(qint64 nValue);
-    bool set_software_breakpoint(qint64 nAddress, qint32 nCount, QString sInfo);
-    qint64 get_ret_address(qint64 nThreadId);
-    QString get_address_symbol_string(qint64 nAddress);
+    QString get_disasm_string(quint64 nAddress);
+    void set_single_step(quint64 nThreadId, QString sInfo);
+    void add_uniq_integer(quint64 nValue);
+    bool is_uniq_integer_present(quint64 nValue);
+    bool is_user_code(quint64 nValue);
+    bool is_system_code(quint64 nValue);
+    bool set_software_breakpoint(quint64 nAddress, qint32 nCount, QString sInfo);
+    quint64 get_ret_address(quint64 nThreadId);
+    QString get_address_symbol_string(quint64 nAddress);
     bool dump_to_file();
     // TODO resume all threads
 
 private:
     XAbstractDebugger *g_pDebugger;
-    QSet<qint64> g_stUniqIntegers;
+    QSet<quint64> g_stUniqIntegers;
     INFO g_info;
 };
 

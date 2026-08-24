@@ -20,22 +20,97 @@
  */
 #include "xdebugscriptengine.h"
 
+namespace {
+const qsreal S_MAX_SAFE_SCRIPT_INTEGER = 9007199254740991.0;  // 2^53 - 1
+
+QString toScriptUInt64(quint64 nValue)
+{
+    return QString("0x%1").arg(nValue, 16, 16, QChar('0'));
+}
+
+bool fromScriptUInt64(const QScriptValue &value, quint64 *pnValue)
+{
+    if (!pnValue) {
+        return false;
+    }
+
+    if (value.isNumber()) {
+        qsreal nNumber = value.toNumber();
+
+        if (!qIsFinite(nNumber) || (nNumber < 0) || (nNumber > S_MAX_SAFE_SCRIPT_INTEGER)) {
+            return false;
+        }
+
+        quint64 nInteger = (quint64)nNumber;
+
+        if ((qsreal)nInteger != nNumber) {
+            return false;
+        }
+
+        *pnValue = nInteger;
+
+        return true;
+    }
+
+    if (value.isString()) {
+        QString sValue = value.toString().trimmed();
+        qint32 nBase = 10;
+
+        if (sValue.startsWith("0x", Qt::CaseInsensitive)) {
+            sValue.remove(0, 2);
+            nBase = 16;
+        } else if (sValue.contains('a', Qt::CaseInsensitive) || sValue.contains('b', Qt::CaseInsensitive) ||
+                   sValue.contains('c', Qt::CaseInsensitive) || sValue.contains('d', Qt::CaseInsensitive) ||
+                   sValue.contains('e', Qt::CaseInsensitive) || sValue.contains('f', Qt::CaseInsensitive)) {
+            // Accept unprefixed legacy tohex64() output when its base is unambiguous.
+            nBase = 16;
+        }
+
+        bool bValid = false;
+        quint64 nInteger = sValue.toULongLong(&bValid, nBase);
+
+        if (bValid && !sValue.isEmpty()) {
+            *pnValue = nInteger;
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool getUInt64Argument(QScriptContext *pContext, qint32 nIndex, quint64 *pnValue)
+{
+    if (fromScriptUInt64(pContext->argument(nIndex), pnValue)) {
+        return true;
+    }
+
+    pContext->throwError(QScriptContext::TypeError,
+                         QString("Argument %1 must be an unsigned safe integer, a decimal string, or a hexadecimal string prefixed with 0x")
+                             .arg(nIndex + 1));
+
+    return false;
+}
+}  // namespace
+
 QScriptValue XDEBUGSCRIPT_BREAKPOINT_INFO_toScriptValue(QScriptEngine *engine, const XDEBUGSCRIPT_BREAKPOINT_INFO &breakpoint_info)
 {
     QScriptValue obj = engine->newObject();
 
-    obj.setProperty("address", breakpoint_info.address);
+    obj.setProperty("address", toScriptUInt64(breakpoint_info.address));
     obj.setProperty("info", breakpoint_info.info);
-    obj.setProperty("thread_id", breakpoint_info.thread_id);
+    obj.setProperty("thread_id", toScriptUInt64(breakpoint_info.thread_id));
 
     return obj;
 }
 
 void XDEBUGSCRIPT_BREAKPOINT_INFO_fromScriptValue(const QScriptValue &obj, XDEBUGSCRIPT_BREAKPOINT_INFO &breakpoint_info)
 {
-    breakpoint_info.address = obj.property("address").toInteger();
+    breakpoint_info.address = 0;
+    breakpoint_info.thread_id = 0;
+    fromScriptUInt64(obj.property("address"), &breakpoint_info.address);
     breakpoint_info.info = obj.property("info").toString();
-    breakpoint_info.thread_id = obj.property("thread_id").toInteger();
+    fromScriptUInt64(obj.property("thread_id"), &breakpoint_info.thread_id);
 }
 
 QScriptValue XDEBUGSCRIPT_SHAREDOBJECT_INFO_toScriptValue(QScriptEngine *engine, const XDEBUGSCRIPT_SHAREDOBJECT_INFO &sharedobject_info)
@@ -44,8 +119,8 @@ QScriptValue XDEBUGSCRIPT_SHAREDOBJECT_INFO_toScriptValue(QScriptEngine *engine,
 
     obj.setProperty("name", sharedobject_info.name);
     obj.setProperty("file_name", sharedobject_info.file_name);
-    obj.setProperty("image_base", sharedobject_info.image_base);
-    obj.setProperty("image_size", sharedobject_info.image_size);
+    obj.setProperty("image_base", toScriptUInt64(sharedobject_info.image_base));
+    obj.setProperty("image_size", toScriptUInt64(sharedobject_info.image_size));
 
     return obj;
 }
@@ -54,8 +129,10 @@ void XDEBUGSCRIPT_SHAREDOBJECT_INFO_fromScriptValue(const QScriptValue &obj, XDE
 {
     sharedobject_info.name = obj.property("name").toString();
     sharedobject_info.file_name = obj.property("file_name").toString();
-    sharedobject_info.image_base = obj.property("image_base").toInteger();
-    sharedobject_info.image_size = obj.property("image_size").toInteger();
+    sharedobject_info.image_base = 0;
+    sharedobject_info.image_size = 0;
+    fromScriptUInt64(obj.property("image_base"), &sharedobject_info.image_base);
+    fromScriptUInt64(obj.property("image_size"), &sharedobject_info.image_size);
 }
 
 QScriptValue XDEBUGSCRIPT_FUNCTION_INFO_toScriptValue(QScriptEngine *engine, const XDEBUGSCRIPT_FUNCTION_INFO &function_info)
@@ -63,11 +140,11 @@ QScriptValue XDEBUGSCRIPT_FUNCTION_INFO_toScriptValue(QScriptEngine *engine, con
     QScriptValue obj = engine->newObject();
 
     obj.setProperty("name", function_info.name);
-    obj.setProperty("address", function_info.address);
-    obj.setProperty("ret_address", function_info.ret_address);
+    obj.setProperty("address", toScriptUInt64(function_info.address));
+    obj.setProperty("ret_address", toScriptUInt64(function_info.ret_address));
 
     for (qint32 i = 0; i < 10; i++) {
-        obj.setProperty(QString("parameter%1").arg(i), function_info.parameter[i]);
+        obj.setProperty(QString("parameter%1").arg(i), toScriptUInt64(function_info.parameter[i]));
     }
 
     return obj;
@@ -76,10 +153,14 @@ QScriptValue XDEBUGSCRIPT_FUNCTION_INFO_toScriptValue(QScriptEngine *engine, con
 void XDEBUGSCRIPT_FUNCTION_INFO_fromScriptValue(const QScriptValue &obj, XDEBUGSCRIPT_FUNCTION_INFO &function_info)
 {
     function_info.name = obj.property("name").toString();
-    function_info.address = obj.property("address").toInteger();
+    function_info.address = 0;
+    function_info.ret_address = 0;
+    fromScriptUInt64(obj.property("address"), &function_info.address);
+    fromScriptUInt64(obj.property("ret_address"), &function_info.ret_address);
 
     for (qint32 i = 0; i < 10; i++) {
-        function_info.parameter[i] = obj.property(QString("parameter%1").arg(i)).toInteger();
+        function_info.parameter[i] = 0;
+        fromScriptUInt64(obj.property(QString("parameter%1").arg(i)), &function_info.parameter[i]);
     }
 }
 
@@ -182,7 +263,11 @@ QScriptValue XDebugScriptEngine::_tohex8(QScriptContext *pContext, QScriptEngine
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue = pContext->argument(0).toInteger();
+        quint64 nValue = 0;
+
+        if (!getUInt64Argument(pContext, 0, &nValue)) {
+            return result;
+        }
 
         result = pScriptEngine->tohex8((quint8)nValue);
     }
@@ -202,7 +287,11 @@ QScriptValue XDebugScriptEngine::_tohex16(QScriptContext *pContext, QScriptEngin
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue = pContext->argument(0).toInteger();
+        quint64 nValue = 0;
+
+        if (!getUInt64Argument(pContext, 0, &nValue)) {
+            return result;
+        }
 
         result = pScriptEngine->tohex16((quint16)nValue);
     }
@@ -222,7 +311,11 @@ QScriptValue XDebugScriptEngine::_tohex32(QScriptContext *pContext, QScriptEngin
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue = pContext->argument(0).toInteger();
+        quint64 nValue = 0;
+
+        if (!getUInt64Argument(pContext, 0, &nValue)) {
+            return result;
+        }
 
         result = pScriptEngine->tohex32((quint32)nValue);
     }
@@ -242,9 +335,13 @@ QScriptValue XDebugScriptEngine::_tohex64(QScriptContext *pContext, QScriptEngin
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue = pContext->argument(0).toInteger();
+        quint64 nValue = 0;
 
-        result = pScriptEngine->tohex64((quint64)nValue);
+        if (!getUInt64Argument(pContext, 0, &nValue)) {
+            return result;
+        }
+
+        result = pScriptEngine->tohex64(nValue);
     }
 
     return result;
@@ -252,7 +349,9 @@ QScriptValue XDebugScriptEngine::_tohex64(QScriptContext *pContext, QScriptEngin
 
 QString XDebugScriptEngine::tohex64(quint64 value)
 {
-    return XBinary::valueToHex((quint64)value);
+    // Unlike the legacy unprefixed output, this remains unambiguous when it is
+    // passed back to an API that accepts either decimal or hexadecimal strings.
+    return toScriptUInt64(value);
 }
 
 QScriptValue XDebugScriptEngine::_exit(QScriptContext *pContext, QScriptEngine *pEngine)
@@ -282,8 +381,12 @@ QScriptValue XDebugScriptEngine::_show_hex_state(QScriptContext *pContext, QScri
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nAddress = pContext->argument(0).toInteger();
-        qint64 nSize = pContext->argument(1).toInteger();
+        quint64 nAddress = 0;
+        quint64 nSize = 0;
+
+        if (!getUInt64Argument(pContext, 0, &nAddress) || !getUInt64Argument(pContext, 1, &nSize)) {
+            return result;
+        }
 
         pScriptEngine->show_hex_state(nAddress, nSize);
     }
@@ -291,9 +394,9 @@ QScriptValue XDebugScriptEngine::_show_hex_state(QScriptContext *pContext, QScri
     return result;
 }
 
-void XDebugScriptEngine::show_hex_state(qint64 nAddress, qint64 nSize)
+void XDebugScriptEngine::show_hex_state(quint64 nAddress, quint64 nSize)
 {
-    nSize = qMin(nSize, (qint64)0x1000);
+    nSize = qMin(nSize, (quint64)0x1000);
 
     QByteArray baArray = g_pDebugger->getXInfoDB()->read_array(nAddress, nSize);
     QString sText = baArray.toHex().data();
@@ -310,8 +413,12 @@ QScriptValue XDebugScriptEngine::_show_disasm_state(QScriptContext *pContext, QS
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nAddress = pContext->argument(0).toInteger();
+        quint64 nAddress = 0;
         qint64 nCount = pContext->argument(1).toInteger();
+
+        if (!getUInt64Argument(pContext, 0, &nAddress)) {
+            return result;
+        }
 
         pScriptEngine->show_disasm_state(nAddress, nCount);
     }
@@ -319,7 +426,7 @@ QScriptValue XDebugScriptEngine::_show_disasm_state(QScriptContext *pContext, QS
     return result;
 }
 
-void XDebugScriptEngine::show_disasm_state(qint64 nAddress, qint32 nCount)
+void XDebugScriptEngine::show_disasm_state(quint64 nAddress, qint32 nCount)
 {
     // nCount = qMin(nCount, (qint32)100);
 
@@ -423,7 +530,11 @@ QScriptValue XDebugScriptEngine::_get_disasm_string(QScriptContext *pContext, QS
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue = pContext->argument(0).toInteger();
+        quint64 nValue = 0;
+
+        if (!getUInt64Argument(pContext, 0, &nValue)) {
+            return result;
+        }
 
         result = pScriptEngine->get_disasm_string(nValue);
     }
@@ -431,7 +542,7 @@ QScriptValue XDebugScriptEngine::_get_disasm_string(QScriptContext *pContext, QS
     return result;
 }
 
-QString XDebugScriptEngine::get_disasm_string(qint64 nAddress)
+QString XDebugScriptEngine::get_disasm_string(quint64 nAddress)
 {
     // return g_pDebugger->disasm(nAddress).sString;
     return "";
@@ -444,8 +555,12 @@ QScriptValue XDebugScriptEngine::_set_single_step(QScriptContext *pContext, QScr
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue = pContext->argument(0).toInteger();
+        quint64 nValue = 0;
         QString sValue = pContext->argument(1).toString();
+
+        if (!getUInt64Argument(pContext, 0, &nValue)) {
+            return result;
+        }
 
         pScriptEngine->set_single_step(nValue, sValue);
     }
@@ -453,7 +568,7 @@ QScriptValue XDebugScriptEngine::_set_single_step(QScriptContext *pContext, QScr
     return result;
 }
 
-void XDebugScriptEngine::set_single_step(qint64 nThreadId, QString sInfo)
+void XDebugScriptEngine::set_single_step(quint64 nThreadId, QString sInfo)
 {
     Q_UNUSED(nThreadId)
     Q_UNUSED(sInfo)
@@ -471,7 +586,11 @@ QScriptValue XDebugScriptEngine::_add_uniq_integer(QScriptContext *pContext, QSc
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue = pContext->argument(0).toInteger();
+        quint64 nValue = 0;
+
+        if (!getUInt64Argument(pContext, 0, &nValue)) {
+            return result;
+        }
 
         pScriptEngine->add_uniq_integer(nValue);
     }
@@ -479,7 +598,7 @@ QScriptValue XDebugScriptEngine::_add_uniq_integer(QScriptContext *pContext, QSc
     return result;
 }
 
-void XDebugScriptEngine::add_uniq_integer(qint64 nValue)
+void XDebugScriptEngine::add_uniq_integer(quint64 nValue)
 {
     g_stUniqIntegers.insert(nValue);
 }
@@ -491,7 +610,11 @@ QScriptValue XDebugScriptEngine::_is_uniq_integer_present(QScriptContext *pConte
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue = pContext->argument(0).toInteger();
+        quint64 nValue = 0;
+
+        if (!getUInt64Argument(pContext, 0, &nValue)) {
+            return result;
+        }
 
         result = pScriptEngine->is_uniq_integer_present(nValue);
     }
@@ -499,7 +622,7 @@ QScriptValue XDebugScriptEngine::_is_uniq_integer_present(QScriptContext *pConte
     return result;
 }
 
-bool XDebugScriptEngine::is_uniq_integer_present(qint64 nValue)
+bool XDebugScriptEngine::is_uniq_integer_present(quint64 nValue)
 {
     return g_stUniqIntegers.contains(nValue);
 }
@@ -511,7 +634,11 @@ QScriptValue XDebugScriptEngine::_is_user_code(QScriptContext *pContext, QScript
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue = pContext->argument(0).toInteger();
+        quint64 nValue = 0;
+
+        if (!getUInt64Argument(pContext, 0, &nValue)) {
+            return result;
+        }
 
         result = pScriptEngine->is_user_code(nValue);
     }
@@ -519,7 +646,7 @@ QScriptValue XDebugScriptEngine::_is_user_code(QScriptContext *pContext, QScript
     return result;
 }
 
-bool XDebugScriptEngine::is_user_code(qint64 nValue)
+bool XDebugScriptEngine::is_user_code(quint64 nValue)
 {
     return g_pDebugger->isUserCode(nValue);
 }
@@ -531,7 +658,11 @@ QScriptValue XDebugScriptEngine::_is_system_code(QScriptContext *pContext, QScri
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue = pContext->argument(0).toInteger();
+        quint64 nValue = 0;
+
+        if (!getUInt64Argument(pContext, 0, &nValue)) {
+            return result;
+        }
 
         result = pScriptEngine->is_system_code(nValue);
     }
@@ -539,7 +670,7 @@ QScriptValue XDebugScriptEngine::_is_system_code(QScriptContext *pContext, QScri
     return result;
 }
 
-bool XDebugScriptEngine::is_system_code(qint64 nValue)
+bool XDebugScriptEngine::is_system_code(quint64 nValue)
 {
     return g_pDebugger->bIsSystemCode(nValue);
 }
@@ -551,9 +682,13 @@ QScriptValue XDebugScriptEngine::_set_software_breakpoint(QScriptContext *pConte
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue1 = pContext->argument(0).toInteger();
+        quint64 nValue1 = 0;
         qint32 nValue2 = pContext->argument(1).toInt32();
         QString sValue = pContext->argument(2).toString();
+
+        if (!getUInt64Argument(pContext, 0, &nValue1)) {
+            return result;
+        }
 
         result = pScriptEngine->set_software_breakpoint(nValue1, nValue2, sValue);
     }
@@ -561,7 +696,7 @@ QScriptValue XDebugScriptEngine::_set_software_breakpoint(QScriptContext *pConte
     return result;
 }
 
-bool XDebugScriptEngine::set_software_breakpoint(qint64 nAddress, qint32 nCount, QString sInfo)
+bool XDebugScriptEngine::set_software_breakpoint(quint64 nAddress, qint32 nCount, QString sInfo)
 {
     Q_UNUSED(nAddress)
     Q_UNUSED(nCount)
@@ -578,14 +713,19 @@ QScriptValue XDebugScriptEngine::_get_ret_address(QScriptContext *pContext, QScr
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue = pContext->argument(0).toInteger();
-        result = (qsreal)(pScriptEngine->get_ret_address(nValue));
+        quint64 nValue = 0;
+
+        if (!getUInt64Argument(pContext, 0, &nValue)) {
+            return result;
+        }
+
+        result = toScriptUInt64(pScriptEngine->get_ret_address(nValue));
     }
 
     return result;
 }
 
-qint64 XDebugScriptEngine::get_ret_address(qint64 nThreadId)
+quint64 XDebugScriptEngine::get_ret_address(quint64 nThreadId)
 {
     Q_UNUSED(nThreadId)
 
@@ -593,7 +733,7 @@ qint64 XDebugScriptEngine::get_ret_address(qint64 nThreadId)
     //    handleID.hHandle=g_pDebugger->getXInfoDB()->getThreadInfos()->value(nThreadId).hThread;
     //    handleID.nID=nThreadId;
 
-    return g_pDebugger->getRetAddress(handleID);
+    return (quint64)g_pDebugger->getRetAddress(handleID);
 }
 
 QScriptValue XDebugScriptEngine::_get_address_symbol_string(QScriptContext *pContext, QScriptEngine *pEngine)
@@ -603,14 +743,19 @@ QScriptValue XDebugScriptEngine::_get_address_symbol_string(QScriptContext *pCon
     XDebugScriptEngine *pScriptEngine = static_cast<XDebugScriptEngine *>(pEngine);
 
     if (pScriptEngine) {
-        qint64 nValue = pContext->argument(0).toInteger();
+        quint64 nValue = 0;
+
+        if (!getUInt64Argument(pContext, 0, &nValue)) {
+            return result;
+        }
+
         result = (pScriptEngine->get_address_symbol_string(nValue));
     }
 
     return result;
 }
 
-QString XDebugScriptEngine::get_address_symbol_string(qint64 nAddress)
+QString XDebugScriptEngine::get_address_symbol_string(quint64 nAddress)
 {
     return g_pDebugger->getAddressSymbolString(nAddress);
 }
