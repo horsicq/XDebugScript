@@ -40,12 +40,13 @@ bool XDebugScript::setData(XAbstractDebugger *pDebugger, const QString &sScriptF
     g_pDebugger = pDebugger;
 
     g_DebugScriptEngine = new XDebugScriptEngine(this, pDebugger);
+    connect(g_DebugScriptEngine, &XDebugScriptEngine::infoMessage, this, &XDebugScript::infoMessage, Qt::DirectConnection);
 
     QString sText = XBinary::readFile(sScriptFileName);
 
     g_script = g_DebugScriptEngine->evaluate(sText, sScriptFileName);
 
-    if (_handleError(g_script)) {
+    if (_handleError(g_script) && _getInfo()) {
         connect(pDebugger, SIGNAL(eventCreateProcess(XInfoDB::PROCESS_INFO *)), this, SLOT(onEventCreateProcess(XInfoDB::PROCESS_INFO *)), Qt::DirectConnection);
         connect(pDebugger, SIGNAL(eventExitProcess(XInfoDB::EXITPROCESS_INFO *)), this, SLOT(onEventExitProcess(XInfoDB::EXITPROCESS_INFO *)), Qt::DirectConnection);
         connect(pDebugger, SIGNAL(eventCreateThread(XInfoDB::THREAD_INFO *)), this, SLOT(onEventCreateThread(XInfoDB::THREAD_INFO *)), Qt::DirectConnection);
@@ -60,8 +61,6 @@ bool XDebugScript::setData(XAbstractDebugger *pDebugger, const QString &sScriptF
         connect(pDebugger, SIGNAL(eventFunctionEnter(XInfoDB::FUNCTION_INFO *)), this, SLOT(onEventFunctionEnter(XInfoDB::FUNCTION_INFO *)), Qt::DirectConnection);
         connect(pDebugger, SIGNAL(eventFunctionLeave(XInfoDB::FUNCTION_INFO *)), this, SLOT(onEventFunctionLeave(XInfoDB::FUNCTION_INFO *)), Qt::DirectConnection);
 
-        _getInfo();
-
         bResult = true;
     }
 
@@ -70,13 +69,11 @@ bool XDebugScript::setData(XAbstractDebugger *pDebugger, const QString &sScriptF
 
 XDebugScriptEngine::INFO XDebugScript::getInfo()
 {
-    XDebugScriptEngine::INFO result = {};
-
     if (g_DebugScriptEngine) {
-        g_DebugScriptEngine->getInfo();
+        return g_DebugScriptEngine->getInfo();
     }
 
-    return result;
+    return {};
 }
 
 bool XDebugScript::_handleError(QScriptValue scriptValue)
@@ -88,21 +85,54 @@ bool XDebugScript::_handleError(QScriptValue scriptValue)
         if (g_DebugScriptEngine->handleError(scriptValue, &sErrorString)) {
             bResult = true;
         } else {
-#ifdef QT_DEBUG
-            // TODO
-            qDebug("%s", sErrorString.toLatin1().data());
-#endif
+            emit errorMessage(sErrorString);
         }
     }
 
     return bResult;
 }
 
+bool XDebugScript::_resolveCallback(const QString &sFunction, QScriptValue *pScriptValue, bool *pbDefined)
+{
+    if ((!g_DebugScriptEngine) || (!pScriptValue) || (!pbDefined)) {
+        return false;
+    }
+
+    *pbDefined = false;
+    *pScriptValue = g_DebugScriptEngine->globalObject().property(sFunction);
+
+    if (!_handleError(*pScriptValue)) {
+        return false;
+    }
+
+    if ((!pScriptValue->isValid()) || pScriptValue->isUndefined() || pScriptValue->isNull()) {
+        return true;
+    }
+
+    *pbDefined = true;
+    if (!pScriptValue->isFunction()) {
+        _reportError(tr("Script callback is not a function: %1").arg(sFunction));
+        return false;
+    }
+
+    return true;
+}
+
+void XDebugScript::_reportError(const QString &sText)
+{
+    emit errorMessage(sText);
+
+    if (g_pDebugger) {
+        g_pDebugger->stop();
+    }
+}
+
 void XDebugScript::_onBreakPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo, QString sFunction)
 {
-    QScriptValue scriptValue = g_DebugScriptEngine->globalObject().property(sFunction);
+    QScriptValue scriptValue;
+    bool bDefined = false;
 
-    if (_handleError(scriptValue)) {
+    if (_resolveCallback(sFunction, &scriptValue, &bDefined) && bDefined) {
         XDEBUGSCRIPT_BREAKPOINT_INFO breakpoint_info = {};
         breakpoint_info.address = pBreakPointInfo->nAddress;
         breakpoint_info.info = pBreakPointInfo->vInfo.toString();
@@ -122,9 +152,10 @@ void XDebugScript::_onBreakPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo, QStr
 
 void XDebugScript::_onSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo, QString sFunction)
 {
-    QScriptValue scriptValue = g_DebugScriptEngine->globalObject().property(sFunction);
+    QScriptValue scriptValue;
+    bool bDefined = false;
 
-    if (_handleError(scriptValue)) {
+    if (_resolveCallback(sFunction, &scriptValue, &bDefined) && bDefined) {
         XDEBUGSCRIPT_SHAREDOBJECT_INFO shared_info = {};
         shared_info.name = pSharedObjectInfo->sName;
         shared_info.file_name = pSharedObjectInfo->sFileName;
@@ -145,9 +176,10 @@ void XDebugScript::_onSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo
 
 void XDebugScript::_onFunction(XInfoDB::FUNCTION_INFO *pFunctionInfo, QString sFunction)
 {
-    QScriptValue scriptValue = g_DebugScriptEngine->globalObject().property(sFunction);
+    QScriptValue scriptValue;
+    bool bDefined = false;
 
-    if (_handleError(scriptValue)) {
+    if (_resolveCallback(sFunction, &scriptValue, &bDefined) && bDefined) {
         XDEBUGSCRIPT_FUNCTION_INFO function_info = {};
         function_info.name = pFunctionInfo->sName;
         function_info.address = pFunctionInfo->nAddress;
@@ -169,19 +201,23 @@ void XDebugScript::_onFunction(XInfoDB::FUNCTION_INFO *pFunctionInfo, QString sF
     }
 }
 
-void XDebugScript::_getInfo()
+bool XDebugScript::_getInfo()
 {
-    QScriptValue scriptValue = g_DebugScriptEngine->globalObject().property("_getInfo");
+    QScriptValue scriptValue;
+    bool bDefined = false;
 
-    if (_handleError(scriptValue)) {
-        QScriptValueList valuelist;
-
-        QScriptValue result = scriptValue.call(g_script, valuelist);
-
-        if (_handleError(result)) {
-            // TODO mb
-        }
+    if (!_resolveCallback("_getInfo", &scriptValue, &bDefined)) {
+        return false;
     }
+
+    if (!bDefined) {
+        return true;
+    }
+
+    QScriptValueList valuelist;
+    QScriptValue result = scriptValue.call(g_script, valuelist);
+
+    return _handleError(result);
 }
 
 void XDebugScript::onEventCreateProcess(XInfoDB::PROCESS_INFO *pProcessInfo)
@@ -218,16 +254,12 @@ void XDebugScript::onEventExitThread(XInfoDB::EXITTHREAD_INFO *pExitThreadInfo)
 
 void XDebugScript::onEventLoadSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo)
 {
-#ifdef QT_DEBUG
     _onSharedObject(pSharedObjectInfo, "_LoadSharedObject");
-#endif
 }
 
 void XDebugScript::onEventUnloadSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo)
 {
-#ifdef QT_DEBUG
     _onSharedObject(pSharedObjectInfo, "_UnloadSharedObject");
-#endif
 }
 
 void XDebugScript::onEventDebugString(XInfoDB::DEBUGSTRING_INFO *pDebugString)

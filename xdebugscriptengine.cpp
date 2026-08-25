@@ -194,6 +194,7 @@ XDebugScriptEngine::XDebugScriptEngine(QObject *pParent, XAbstractDebugger *pDeb
     _addFunction(_set_software_breakpoint, "set_software_breakpoint");
     _addFunction(_get_ret_address, "get_ret_address");
     _addFunction(_get_address_symbol_string, "get_address_symbol_string");
+    _addFunction(_dump_to_file, "dump_to_file");
 }
 
 XDebugScriptEngine::~XDebugScriptEngine()
@@ -202,18 +203,35 @@ XDebugScriptEngine::~XDebugScriptEngine()
 
 bool XDebugScriptEngine::handleError(QScriptValue value, QString *psErrorString)
 {
-    bool bResult = true;
+    Q_UNUSED(value)
 
-    if (value.isError()) {
-        // TODO Check more information
-        *psErrorString = QString("%1(%2): %3").arg(tr("Script"), value.property("lineNumber").toString(), value.toString());
+    if (!hasUncaughtException()) {
+        return true;
+    }
 
-        bResult = false;
+    const QScriptValue exception = uncaughtException();
+    const qint32 nLineNumber = uncaughtExceptionLineNumber();
+    const QStringList listBacktrace = uncaughtExceptionBacktrace();
+    QString sFileName = exception.property("fileName").toString();
 
+    if (sFileName.isEmpty()) {
+        sFileName = tr("Script");
+    }
+
+    if (psErrorString) {
+        *psErrorString = QString("%1(%2): %3").arg(sFileName).arg(nLineNumber).arg(exception.toString());
+        if (!listBacktrace.isEmpty()) {
+            psErrorString->append(QString("\n%1").arg(listBacktrace.join('\n')));
+        }
+    }
+
+    clearExceptions();
+
+    if (g_pDebugger) {
         g_pDebugger->stop();
     }
 
-    return bResult;
+    return false;
 }
 
 XDebugScriptEngine::INFO XDebugScriptEngine::getInfo()

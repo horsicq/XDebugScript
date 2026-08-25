@@ -35,10 +35,12 @@ public:
 
 private:
     bool _handleError(QScriptValue scriptValue);
+    bool _resolveCallback(const QString &sFunction, QScriptValue *pScriptValue, bool *pbDefined);
+    void _reportError(const QString &sText);
     void _onBreakPoint(XInfoDB::BREAKPOINT_INFO *pBreakPointInfo, QString sFunction);
     void _onSharedObject(XInfoDB::SHAREDOBJECT_INFO *pSharedObjectInfo, QString sFunction);
     void _onFunction(XInfoDB::FUNCTION_INFO *pFunctionInfo, QString sFunction);
-    void _getInfo();
+    bool _getInfo();
 
 private slots:
     void onEventCreateProcess(XInfoDB::PROCESS_INFO *pProcessInfo);
