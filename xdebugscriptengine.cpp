@@ -59,9 +59,8 @@ bool fromScriptUInt64(const QScriptValue &value, quint64 *pnValue)
         if (sValue.startsWith("0x", Qt::CaseInsensitive)) {
             sValue.remove(0, 2);
             nBase = 16;
-        } else if (sValue.contains('a', Qt::CaseInsensitive) || sValue.contains('b', Qt::CaseInsensitive) ||
-                   sValue.contains('c', Qt::CaseInsensitive) || sValue.contains('d', Qt::CaseInsensitive) ||
-                   sValue.contains('e', Qt::CaseInsensitive) || sValue.contains('f', Qt::CaseInsensitive)) {
+        } else if (sValue.contains('a', Qt::CaseInsensitive) || sValue.contains('b', Qt::CaseInsensitive) || sValue.contains('c', Qt::CaseInsensitive) ||
+                   sValue.contains('d', Qt::CaseInsensitive) || sValue.contains('e', Qt::CaseInsensitive) || sValue.contains('f', Qt::CaseInsensitive)) {
             // Accept unprefixed legacy tohex64() output when its base is unambiguous.
             nBase = 16;
         }
@@ -86,8 +85,7 @@ bool getUInt64Argument(QScriptContext *pContext, qint32 nIndex, quint64 *pnValue
     }
 
     pContext->throwError(QScriptContext::TypeError,
-                         QString("Argument %1 must be an unsigned safe integer, a decimal string, or a hexadecimal string prefixed with 0x")
-                             .arg(nIndex + 1));
+                         QString("Argument %1 must be an unsigned safe integer, a decimal string, or a hexadecimal string prefixed with 0x").arg(nIndex + 1));
 
     return false;
 }
